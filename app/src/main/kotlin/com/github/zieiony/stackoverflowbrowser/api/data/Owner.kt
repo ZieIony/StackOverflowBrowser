@@ -1,9 +1,10 @@
 package com.github.zieiony.stackoverflowbrowser.api.data
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import java.io.Serializable
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-class Owner {
+class Owner : Serializable {
     var display_name: String? = null
     var accept_rate: String? = null
     var user_type: String? = null

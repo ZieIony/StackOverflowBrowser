@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="data"
+            type="com.github.zieiony.stackoverflowbrowser.api.data.Answer"/>
+
+    </data>
+
+    <carbon.widget.RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="72dp"
+        android:background="?attr/carbon_colorBackground"
+        app:carbon_rippleColor="?attr/carbon_rippleColor">
+
+
+    </carbon.widget.RelativeLayout>
+</layout>

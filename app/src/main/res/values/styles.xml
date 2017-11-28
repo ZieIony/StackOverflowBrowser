@@ -1,11 +1,25 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="carbon_Theme.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
+
+    <style name="TextAppearance.Title" parent="carbon_TextAppearance.Subhead"/>
+
+    <style name="TextAppearance.Answers" parent="carbon_TextAppearance.Subhead">
+        <item name="android:textColor">@color/green</item>
+    </style>
+
+    <style name="TextAppearance.Score" parent="carbon_TextAppearance.Subhead">
+        <item name="android:textColor">@color/gray</item>
+    </style>
+
+    <style name="TextAppearance.Body" parent="carbon_TextAppearance.Body1"/>
+
+    <style name="TextAppearance.Caption" parent="carbon_TextAppearance.Caption"/>
 
 </resources>

@@ -2,10 +2,11 @@ package com.github.zieiony.stackoverflowbrowser.api.data
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
+import java.io.Serializable
 import java.util.*
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-class Question {
+class Question : Serializable {
     var creation_date: Long? = null
     var tags: Array<String>? = null
     var title: String? = null

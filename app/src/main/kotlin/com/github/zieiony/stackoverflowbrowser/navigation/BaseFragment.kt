@@ -9,6 +9,11 @@ import android.view.ViewGroup
 import java.io.Serializable
 
 open class BaseFragment : Fragment(), NavigationParent {
+    init {
+        if (arguments == null)
+            arguments = Bundle()
+    }
+
     override fun navigate(fragmentClass: Class<out BaseFragment>, arguments: Map<String, Serializable>?) {
         var activity = BaseActivity::class.java
         val annotation = fragmentClass.getAnnotation(FragmentAnnotation::class.java)
@@ -28,7 +33,7 @@ open class BaseFragment : Fragment(), NavigationParent {
     override fun getRoot(): NavigationParent = activity as NavigationParent
 
     override fun navigateBack() {
-        activity.onBackPressed()
+        activity!!.onBackPressed()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

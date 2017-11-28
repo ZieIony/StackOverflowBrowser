@@ -1,9 +1,10 @@
 package com.github.zieiony.stackoverflowbrowser.api.data
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import java.io.Serializable
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-class Answer {
+class Answer : Serializable {
     var creation_date: Long? = null
     var is_accepted: Boolean? = null
     var answer_id: Long? = null

@@ -1,15 +1,22 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
 
 android {
-    compileSdkVersion 26
+    compileSdkVersion 27
+    buildToolsVersion "26.0.2"
+
     defaultConfig {
         applicationId "com.github.zieiony.stackoverflowbrowser"
         minSdkVersion 14
-        targetSdkVersion 26
+        targetSdkVersion 27
         versionCode 1
         versionName "1.0"
+    }
+
+    dataBinding {
+        enabled = true
     }
 
     sourceSets {
@@ -23,6 +30,10 @@ android {
         }
     }
 
+    lintOptions {
+        abortOnError false
+    }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -31,7 +42,14 @@ android {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
-    implementation 'com.android.support:appcompat-v7:26.1.0'
+    implementation 'com.android.support:design:27.0.1'
+    implementation 'com.android.support:gridlayout-v7:27.0.1'
+    implementation 'com.android.support:recyclerview-v7:27.0.1'
+    implementation 'com.android.support:appcompat-v7:27.0.1'
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
     implementation 'com.github.ZieIony:dataapi:34b4a3ba50'
+    implementation 'com.squareup.picasso:picasso:2.5.2'
+
+    kapt 'com.android.databinding:compiler:3.0.1'
+    compile 'com.github.ZieIony:carbon:2c22fa7967'
 }

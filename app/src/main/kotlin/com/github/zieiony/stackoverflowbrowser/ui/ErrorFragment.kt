@@ -11,11 +11,11 @@ import java.io.Serializable
 
 @FragmentAnnotation(layout = R.layout.fragment_error)
 class ErrorFragment : BaseFragment() {
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        error_title.text = arguments.getString(ERROR_TITLE)
-        error_message.text = arguments.getString(ERROR_MESSAGE)
+        error_title.text = arguments!!.getString(ERROR_TITLE)
+        error_message.text = arguments!!.getString(ERROR_MESSAGE)
         error_confirm.setOnClickListener {
             navigateBack()
         }
