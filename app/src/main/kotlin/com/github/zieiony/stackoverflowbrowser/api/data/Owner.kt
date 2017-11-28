@@ -1,4 +1,4 @@
-package com.github.zieiony.stackoverflowbrowser.data
+package com.github.zieiony.stackoverflowbrowser.api.data
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 

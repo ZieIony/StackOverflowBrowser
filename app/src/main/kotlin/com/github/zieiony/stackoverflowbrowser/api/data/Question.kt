@@ -1,11 +1,11 @@
-package com.github.zieiony.stackoverflowbrowser.data
+package com.github.zieiony.stackoverflowbrowser.api.data
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 import java.util.*
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-class Items {
+class Question {
     var creation_date: Long? = null
     var tags: Array<String>? = null
     var title: String? = null
@@ -22,8 +22,9 @@ class Items {
     var is_answered: Boolean? = null
 
     override fun toString(): String =
-            "Items(creation_date=$creation_date, tags=${Arrays.toString(tags)}, title=$title, " +
+            "Question(creation_date=$creation_date, tags=${Arrays.toString(tags)}, title=$title, " +
                     "link=$link, last_edit_date=$last_edit_date, score=$score, answer_count=$answer_count, " +
                     "owner=$owner, last_activity_date=$last_activity_date, question_id=$question_id, " +
                     "view_count=$view_count, is_answered=$is_answered)"
 }
+
