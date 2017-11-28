@@ -24,6 +24,11 @@ object StackOverflowAPI {
                 .subscribeOn(AndroidSchedulers.mainThread())
     }
 
+    fun searchQuestions(query: String, configuration: RequestConfiguration? = RequestConfiguration()): Observable<Response<QuestionsResponse>> {
+        return webAPI.get("/search?intitle=$query&$configuration", QuestionsResponse::class.java)
+                .subscribeOn(AndroidSchedulers.mainThread())
+    }
+
     fun requestAnswers(questionId: Int, configuration: RequestConfiguration? = RequestConfiguration()): Observable<Response<AnswersResponse>> {
         return webAPI.get("/questions/$questionId/answers?$configuration", AnswersResponse::class.java)
                 .subscribeOn(AndroidSchedulers.mainThread())
