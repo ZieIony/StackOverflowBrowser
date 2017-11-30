@@ -20,11 +20,17 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.fragment_search.*
 import pl.zielony.statemachine.OnStateChangedListener
 import pl.zielony.statemachine.StateMachine
+import java.io.Serializable
 
 @FragmentAnnotation(layout = R.layout.fragment_search)
 class SearchFragment : PagingListFragment() {
 
-    val adapter = RowArrayAdapter<Question, Question>(Question::class.java, RowFactory<Question> { parent -> QuestionRow(parent) })
+    val adapter = RowArrayAdapter<Serializable, Question>(Question::class.java, RowFactory<Question> { parent -> QuestionRow(parent) })
+
+    init {
+        adapter.addFactory(EmptyValue::class.java, { parent -> EmptyRow(parent) })
+    }
+
     private val stateMachine = StateMachine<SearchFragmentState>(SearchFragmentState.CLOSED)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -35,7 +41,8 @@ class SearchFragment : PagingListFragment() {
         search_recycler.layoutManager = layoutManager
         search_recycler.adapter = adapter
         search_recycler.addOnScrollListener(onScrollListener)
-        adapter.setOnItemClickedListener { _, question, _ -> navigate(QuestionFragment.makeStep(question)) }
+        adapter.setOnItemClickedListener(Question::class.java, { _, question, _ -> navigate(QuestionFragment.makeStep(question as Question)) })
+        adapter.items = arrayOf(EmptyValue())
 
         search_query.setOnEditorActionListener { textView, i, keyEvent ->
             KeyboardUtil.hideKeyboard(activity)
@@ -44,6 +51,7 @@ class SearchFragment : PagingListFragment() {
                 return@setOnEditorActionListener false
             StackOverflowAPI.cancelRequests()
             arguments!!.putString(CURRENT_QUERY, query)
+            search_swipeRefresh.isEnabled=true
             searchQuestions(query, FIRST_PAGE)
             true
         }
@@ -122,8 +130,10 @@ class SearchFragment : PagingListFragment() {
                 .subscribe({ response ->
                     if (currentPage.get() > FIRST_PAGE) {
                         adapter.items = arrayOf(*adapter.items, *response.data.items!!)
-                    } else {
+                    } else if (response.data.items!!.isNotEmpty()) {
                         adapter.items = response.data.items
+                    } else {
+                        adapter.items = arrayOf(EmptyValue())
                     }
                     isLastPage.set(!response.data.has_more!!)
                     search_swipeRefresh.isRefreshing = false

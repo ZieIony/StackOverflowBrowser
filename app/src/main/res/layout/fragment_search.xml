@@ -64,7 +64,8 @@
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/search_swipeRefresh"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:enabled="false">
 
         <carbon.widget.RecyclerView
             android:id="@+id/search_recycler"
