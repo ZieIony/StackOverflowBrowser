@@ -10,6 +10,10 @@
         <item name="tagViewStyle">@style/TagView</item>
     </style>
 
+    <style name="SplashTheme" parent="carbon_Theme.Light.NoActionBar">
+        <item name="android:windowBackground">@drawable/splash_logo</item>
+    </style>
+
     <style name="TextAppearance.Title" parent="carbon_TextAppearance.Subhead"/>
 
     <style name="TextAppearance.Answers" parent="carbon_TextAppearance.Subhead">
