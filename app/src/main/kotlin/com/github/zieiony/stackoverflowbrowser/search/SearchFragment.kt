@@ -152,7 +152,7 @@ class SearchFragment : PagingListFragment() {
 
     private fun onRestoreInstanceState(savedInstanceState: Bundle) {
         if (savedInstanceState.containsKey(ITEMS))
-            adapter.items = savedInstanceState.getSerializable(ITEMS) as Array<out Question>?
+            adapter.items = savedInstanceState.getSerializable(ITEMS) as Array<out Serializable>?
         val newState = savedInstanceState.getSerializable(MACHINE_STATE) as SearchFragmentState
         if (stateMachine.state != newState)
             stateMachine.state = newState
