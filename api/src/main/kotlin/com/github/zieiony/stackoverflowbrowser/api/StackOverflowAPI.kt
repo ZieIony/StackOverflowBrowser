@@ -8,7 +8,6 @@ import tk.zielony.dataapi.CacheStrategy
 import tk.zielony.dataapi.Configuration
 import tk.zielony.dataapi.Response
 import tk.zielony.dataapi.WebAPI
-import java.net.URLEncoder
 
 object StackOverflowAPI {
     private const val API_URL = "https://api.stackexchange.com/2.2"
@@ -20,14 +19,8 @@ object StackOverflowAPI {
 
     private var webAPI: WebAPI = WebAPI(API_URL, configuration)
 
-    fun requestQuestions(configuration: RequestConfiguration? = RequestConfiguration()): Observable<Response<QuestionsResponse>> {
-        return webAPI.get("/questions?$configuration", QuestionsResponse::class.java)
-                .subscribeOn(AndroidSchedulers.mainThread())
-    }
-
     fun searchQuestions(query: String, page: Int, configuration: RequestConfiguration? = RequestConfiguration()): Observable<Response<QuestionsResponse>> {
-        val encodedQuery = URLEncoder.encode(query, "utf-8")
-        return webAPI.get("/search?intitle=$encodedQuery&$configuration&page=$page", QuestionsResponse::class.java)
+        return webAPI.get("/search?intitle=$query&$configuration&page=$page", QuestionsResponse::class.java)
                 .subscribeOn(AndroidSchedulers.mainThread())
     }
 
