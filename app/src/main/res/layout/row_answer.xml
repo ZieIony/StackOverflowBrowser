@@ -17,8 +17,7 @@
         android:layout_height="wrap_content"
         android:background="@color/carbon_white"
         android:paddingBottom="@dimen/carbon_padding"
-        android:paddingTop="@dimen/carbon_padding"
-        app:carbon_rippleColor="?attr/carbon_rippleColor">
+        android:paddingTop="@dimen/carbon_padding">
 
         <carbon.widget.TextView
             android:id="@+id/answerRow_votes"

@@ -16,15 +16,16 @@
         android:layout_height="wrap_content"
         android:background="@color/carbon_white"
         android:paddingBottom="@dimen/carbon_padding"
-        android:paddingTop="@dimen/carbon_padding">
+        android:paddingTop="@dimen/carbon_padding"
+        app:carbon_rippleColor="?attr/carbon_rippleColor">
 
         <LinearLayout
             android:id="@+id/questionRow_numbers"
             android:layout_width="@dimen/carbon_contentPadding"
-            android:paddingRight="@dimen/carbon_padding"
-            android:paddingEnd="@dimen/carbon_padding"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:paddingEnd="@dimen/carbon_padding"
+            android:paddingRight="@dimen/carbon_padding">
 
             <carbon.widget.TextView
                 android:id="@+id/questionRow_votes"
