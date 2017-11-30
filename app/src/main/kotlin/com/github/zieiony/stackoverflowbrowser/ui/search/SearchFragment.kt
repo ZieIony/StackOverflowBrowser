@@ -1,4 +1,4 @@
-package com.github.zieiony.stackoverflowbrowser.ui
+package com.github.zieiony.stackoverflowbrowser.ui.search
 
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
@@ -12,6 +12,8 @@ import com.github.zieiony.stackoverflowbrowser.api.data.Question
 import com.github.zieiony.stackoverflowbrowser.api.data.QuestionsResponse
 import com.github.zieiony.stackoverflowbrowser.navigation.BaseFragment
 import com.github.zieiony.stackoverflowbrowser.navigation.FragmentAnnotation
+import com.github.zieiony.stackoverflowbrowser.ui.ErrorFragment
+import com.github.zieiony.stackoverflowbrowser.ui.question.QuestionFragment
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.observers.DisposableObserver
 import kotlinx.android.synthetic.main.fragment_search.*
@@ -27,6 +29,7 @@ class SearchFragment : BaseFragment() {
 
         search_recycler.layoutManager = LinearLayoutManager(context)
         search_recycler.adapter = adapter
+        adapter.setOnItemClickedListener { view, question, position -> navigate(QuestionFragment.makeStep(question)) }
 
         if(savedInstanceState!=null)
             adapter.items = savedInstanceState.getSerializable(ITEMS) as Array<out Question>?

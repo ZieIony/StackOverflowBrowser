@@ -4,6 +4,8 @@
 
     <data>
 
+        <import type="android.view.View"/>
+
         <variable
             name="data"
             type="com.github.zieiony.stackoverflowbrowser.api.data.Answer"/>
@@ -12,10 +14,95 @@
 
     <carbon.widget.RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="72dp"
-        android:background="?attr/carbon_colorBackground"
+        android:layout_height="wrap_content"
+        android:background="@color/carbon_white"
+        android:paddingBottom="@dimen/carbon_padding"
+        android:paddingTop="@dimen/carbon_padding"
         app:carbon_rippleColor="?attr/carbon_rippleColor">
 
+        <carbon.widget.TextView
+            android:id="@+id/answerRow_votes"
+            android:layout_width="@dimen/carbon_contentPadding"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:padding="@dimen/carbon_paddingHalf"
+            android:singleLine="true"
+            android:text="@{String.valueOf(data.score)}"
+            android:textAppearance="@style/TextAppearance.Score"/>
+
+        <carbon.widget.TextView
+            android:id="@+id/answerRow_correctAnswer"
+            android:layout_width="@dimen/carbon_contentPadding"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/answerRow_votes"
+            android:gravity="center_horizontal"
+            android:padding="@dimen/carbon_paddingHalf"
+            android:text="✔"
+            android:textAppearance="@style/TextAppearance.Answers"
+            android:visibility="@{data.is_accepted()?View.VISIBLE:View.GONE}"/>
+
+        <carbon.widget.TextView
+            android:id="@+id/answerRow_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/carbon_marginHalf"
+            android:layout_marginEnd="@dimen/carbon_windowPadding"
+            android:layout_marginLeft="@dimen/carbon_padding"
+            android:layout_marginRight="@dimen/carbon_windowPadding"
+            android:layout_marginStart="@dimen/carbon_padding"
+            android:layout_toEndOf="@id/answerRow_votes"
+            android:layout_toRightOf="@id/answerRow_votes"
+            android:textAppearance="@style/TextAppearance.Body"/>
+
+        <carbon.widget.RelativeLayout
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_below="@id/answerRow_text"
+            android:layout_marginEnd="@dimen/carbon_windowPadding"
+            android:layout_marginRight="@dimen/carbon_windowPadding">
+
+            <carbon.widget.TextView
+                android:id="@+id/answerRow_askedBy"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:text="@string/answerRow_answeredBy"
+                android:textAppearance="@style/TextAppearance.Caption"/>
+
+            <carbon.widget.ImageView
+                android:id="@+id/answerRow_ownerPicture"
+                android:layout_width="@dimen/carbon_avatarSize"
+                android:layout_height="@dimen/carbon_avatarSize"
+                android:layout_below="@id/answerRow_askedBy"/>
+
+            <carbon.widget.TextView
+                android:id="@+id/answerRow_owner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/answerRow_askedBy"
+                android:layout_marginLeft="@dimen/carbon_paddingHalf"
+                android:layout_marginStart="@dimen/carbon_paddingHalf"
+                android:layout_toEndOf="@id/answerRow_ownerPicture"
+                android:layout_toRightOf="@id/answerRow_ownerPicture"
+                android:singleLine="true"
+                android:text="@{data.owner.display_name}"
+                android:textAppearance="@style/TextAppearance.Caption"/>
+
+            <carbon.widget.TextView
+                android:id="@+id/answerRow_reputation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/answerRow_owner"
+                android:layout_marginLeft="@dimen/carbon_paddingHalf"
+                android:layout_marginStart="@dimen/carbon_paddingHalf"
+                android:layout_toEndOf="@id/answerRow_ownerPicture"
+                android:layout_toRightOf="@id/answerRow_ownerPicture"
+                android:text="@{String.valueOf(data.owner.reputation)}"
+                android:textAppearance="@style/TextAppearance.Caption"/>
+
+        </carbon.widget.RelativeLayout>
 
     </carbon.widget.RelativeLayout>
 </layout>

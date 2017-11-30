@@ -19,38 +19,18 @@
         android:paddingTop="@dimen/carbon_padding"
         app:carbon_rippleColor="?attr/carbon_rippleColor">
 
-        <LinearLayout
-            android:id="@+id/questionRow_numbers"
+        <carbon.widget.TextView
+            android:id="@+id/fullQuestionRow_votes"
             android:layout_width="@dimen/carbon_contentPadding"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <carbon.widget.TextView
-                android:id="@+id/questionRow_votes"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:padding="@dimen/carbon_paddingHalf"
-                android:singleLine="true"
-                android:text="@{String.valueOf(data.score)}"
-                android:textAppearance="@style/TextAppearance.Score"/>
-
-            <carbon.widget.TextView
-                android:id="@+id/questionRow_answers"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:background="@drawable/selector_answers_background"
-                android:padding="@dimen/carbon_paddingHalf"
-                android:singleLine="true"
-                android:text="@{String.valueOf(data.answer_count)}"
-                android:textAppearance="@style/TextAppearance.Answers"
-                app:carbon_stroke="@color/green"
-                app:carbon_strokeWidth="1dp"/>
-        </LinearLayout>
+            android:gravity="center_horizontal"
+            android:padding="@dimen/carbon_paddingHalf"
+            android:singleLine="true"
+            android:text="@{String.valueOf(data.score)}"
+            android:textAppearance="@style/TextAppearance.Score"/>
 
         <carbon.widget.TextView
-            android:id="@+id/questionRow_title"
+            android:id="@+id/fullQuestionRow_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/carbon_marginHalf"
@@ -58,71 +38,85 @@
             android:layout_marginLeft="@dimen/carbon_padding"
             android:layout_marginRight="@dimen/carbon_windowPadding"
             android:layout_marginStart="@dimen/carbon_padding"
-            android:layout_toEndOf="@id/questionRow_numbers"
-            android:layout_toRightOf="@id/questionRow_numbers"
+            android:layout_toEndOf="@id/fullQuestionRow_votes"
+            android:layout_toRightOf="@id/fullQuestionRow_votes"
             android:text="@{data.title}"
             android:textAppearance="@style/TextAppearance.Title"/>
+
+        <carbon.widget.TextView
+            android:id="@+id/fullQuestionRow_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/fullQuestionRow_title"
+            android:layout_marginBottom="@dimen/carbon_marginHalf"
+            android:layout_marginEnd="@dimen/carbon_windowPadding"
+            android:layout_marginLeft="@dimen/carbon_padding"
+            android:layout_marginRight="@dimen/carbon_windowPadding"
+            android:layout_marginStart="@dimen/carbon_padding"
+            android:layout_toEndOf="@id/fullQuestionRow_votes"
+            android:layout_toRightOf="@id/fullQuestionRow_votes"
+            android:textAppearance="@style/TextAppearance.Body"/>
 
         <carbon.widget.RelativeLayout
             android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
-            android:layout_below="@id/questionRow_title"
+            android:layout_below="@id/fullQuestionRow_text"
             android:layout_marginEnd="@dimen/carbon_windowPadding"
             android:layout_marginRight="@dimen/carbon_windowPadding">
 
             <carbon.widget.TextView
-                android:id="@+id/questionRow_askedBy"
+                android:id="@+id/fullQuestionRow_askedBy"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="4dp"
-                android:text="@string/questionRow_askedBy"
+                android:text="@string/fullQuestionRow_askedBy"
                 android:textAppearance="@style/TextAppearance.Caption"/>
 
             <carbon.widget.ImageView
-                android:id="@+id/questionRow_ownerPicture"
+                android:id="@+id/fullQuestionRow_ownerPicture"
                 android:layout_width="@dimen/carbon_avatarSize"
                 android:layout_height="@dimen/carbon_avatarSize"
-                android:layout_below="@id/questionRow_askedBy"/>
+                android:layout_below="@id/fullQuestionRow_askedBy"/>
 
             <carbon.widget.TextView
-                android:id="@+id/questionRow_owner"
+                android:id="@+id/fullQuestionRow_owner"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/questionRow_askedBy"
+                android:layout_below="@id/fullQuestionRow_askedBy"
                 android:layout_marginLeft="@dimen/carbon_paddingHalf"
                 android:layout_marginStart="@dimen/carbon_paddingHalf"
-                android:layout_toEndOf="@id/questionRow_ownerPicture"
-                android:layout_toRightOf="@id/questionRow_ownerPicture"
+                android:layout_toEndOf="@id/fullQuestionRow_ownerPicture"
+                android:layout_toRightOf="@id/fullQuestionRow_ownerPicture"
                 android:singleLine="true"
                 android:text="@{data.owner.display_name}"
                 android:textAppearance="@style/TextAppearance.Caption"/>
 
             <carbon.widget.TextView
-                android:id="@+id/questionRow_reputation"
+                android:id="@+id/fullQuestionRow_reputation"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/questionRow_owner"
+                android:layout_below="@id/fullQuestionRow_owner"
                 android:layout_marginLeft="@dimen/carbon_paddingHalf"
                 android:layout_marginStart="@dimen/carbon_paddingHalf"
-                android:layout_toEndOf="@id/questionRow_ownerPicture"
-                android:layout_toRightOf="@id/questionRow_ownerPicture"
+                android:layout_toEndOf="@id/fullQuestionRow_ownerPicture"
+                android:layout_toRightOf="@id/fullQuestionRow_ownerPicture"
                 android:text="@{String.valueOf(data.owner.reputation)}"
                 android:textAppearance="@style/TextAppearance.Caption"/>
 
         </carbon.widget.RelativeLayout>
 
         <carbon.widget.FlowLayout
-            android:id="@+id/questionRow_tags"
+            android:id="@+id/fullQuestionRow_tags"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/questionRow_title"
+            android:layout_below="@id/fullQuestionRow_text"
             android:layout_marginLeft="@dimen/carbon_padding"
             android:layout_marginStart="@dimen/carbon_padding"
-            android:layout_toEndOf="@id/questionRow_numbers"
-            android:layout_toLeftOf="@id/questionRow_askedBy"
-            android:layout_toRightOf="@id/questionRow_numbers"
-            android:layout_toStartOf="@id/questionRow_askedBy"/>
+            android:layout_toEndOf="@id/fullQuestionRow_votes"
+            android:layout_toLeftOf="@id/fullQuestionRow_askedBy"
+            android:layout_toRightOf="@id/fullQuestionRow_votes"
+            android:layout_toStartOf="@id/fullQuestionRow_askedBy"/>
     </carbon.widget.RelativeLayout>
 </layout>

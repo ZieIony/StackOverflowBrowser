@@ -5,11 +5,13 @@ class RequestConfiguration {
     private val order = SortingOrder.DESCENDING
     private val sort = SortingType.CREATION
     private val site = SITE_STACKOVERFLOW
+    private val filter = FILTER_DEFAULT
 
-    override fun toString(): String = "pagesize=$pagesize&order=${order.value}&sort=${sort.value}&site=$site"
+    override fun toString(): String = "pagesize=$pagesize&order=${order.value}&sort=${sort.value}&site=$site&filter=$filter"
 
     companion object {
         private const val SITE_STACKOVERFLOW = "stackoverflow"
+        private const val FILTER_DEFAULT = "withbody"
     }
 }
 

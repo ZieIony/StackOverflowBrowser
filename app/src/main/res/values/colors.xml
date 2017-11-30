@@ -7,4 +7,6 @@
     <color name="orange">#F48024</color>
     <color name="green">#5fba7d</color>
     <color name="gray">#6a737c</color>
+    <color name="tagText">#39739d</color>
+    <color name="tagBackground">#E1ECF4</color>
 </resources>

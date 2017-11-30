@@ -12,9 +12,10 @@ class Answer : Serializable {
     var owner: Owner? = null
     var last_activity_date: Long? = null
     var question_id: Long? = null
+    var body: String? = null
 
     override fun toString(): String =
             "Answer(creation_date=$creation_date, is_accepted=$is_accepted, answer_id=$answer_id, " +
                     "score=$score, owner=$owner, last_activity_date=$last_activity_date, " +
-                    "question_id=$question_id)"
+                    "question_id=$question_id, body=$body)"
 }

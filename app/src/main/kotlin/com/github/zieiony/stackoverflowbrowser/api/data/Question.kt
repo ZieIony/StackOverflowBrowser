@@ -18,6 +18,7 @@ class Question : Serializable {
     var last_activity_date: Long? = null
     var question_id: Long? = null
     var view_count: Int? = null
+    var body: String? = null
 
     @JsonProperty("is_answered")
     var is_answered: Boolean? = null
@@ -26,6 +27,6 @@ class Question : Serializable {
             "Question(creation_date=$creation_date, tags=${Arrays.toString(tags)}, title=$title, " +
                     "link=$link, last_edit_date=$last_edit_date, score=$score, answer_count=$answer_count, " +
                     "owner=$owner, last_activity_date=$last_activity_date, question_id=$question_id, " +
-                    "view_count=$view_count, is_answered=$is_answered)"
+                    "view_count=$view_count, is_answered=$is_answered, body=$body)"
 }
 
