@@ -8,8 +8,7 @@
     <carbon.widget.Toolbar
         android:id="@+id/question_toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/orange"/>
+        android:layout_height="wrap_content"/>
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/question_swipeRefresh"

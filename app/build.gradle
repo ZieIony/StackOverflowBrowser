@@ -2,7 +2,9 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
-
+ext{
+    appCompatVersion = "27.0.2"
+}
 android {
     compileSdkVersion 27
     buildToolsVersion "26.0.2"
@@ -13,6 +15,7 @@ android {
         targetSdkVersion 27
         versionCode 1
         versionName "1.0"
+        multiDexEnabled true    // TODO configure proguard
     }
 
     dataBinding {
@@ -42,14 +45,17 @@ android {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
-    implementation 'com.android.support:design:27.0.1'
-    implementation 'com.android.support:gridlayout-v7:27.0.1'
-    implementation 'com.android.support:recyclerview-v7:27.0.1'
-    implementation 'com.android.support:appcompat-v7:27.0.1'
+    implementation 'com.android.support:design:27.0.2'
+    implementation "com.android.support:gridlayout-v7:$appCompatVersion"
+    implementation "com.android.support:recyclerview-v7:$appCompatVersion"
+    implementation "com.android.support:appcompat-v7:$appCompatVersion"
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
-    implementation 'com.github.ZieIony:dataapi:34b4a3ba50'
+    implementation 'com.github.ZieIony:dataapi:d7576e784a'
     implementation 'com.squareup.picasso:picasso:2.5.2'
+    implementation("com.github.ZieIony:StateMachine:ff2a423965")
 
     kapt 'com.android.databinding:compiler:3.0.1'
+
     compile 'com.github.ZieIony:carbon:2c22fa7967'
+    compile 'com.android.support:multidex:1.0.2'
 }

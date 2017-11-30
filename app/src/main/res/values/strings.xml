@@ -1,9 +1,14 @@
 <resources>
     <string name="app_name">StackOverflow Browser</string>
-    <string name="search_search">search</string>
+
+    <string name="search_title">StackOverflow</string>
+
     <string name="error_confirm">ok</string>
-    <string name="error_title_requestFailed">\"Request failed\"</string>
+    <string name="error_title_requestFailed">Request failed</string>
+
     <string name="answerRow_answeredBy">answered by</string>
+
     <string name="questionRow_askedBy">asked by</string>
+
     <string name="fullQuestionRow_askedBy">asked by</string>
 </resources>

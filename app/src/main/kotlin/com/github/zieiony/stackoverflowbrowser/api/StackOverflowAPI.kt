@@ -25,9 +25,9 @@ object StackOverflowAPI {
                 .subscribeOn(AndroidSchedulers.mainThread())
     }
 
-    fun searchQuestions(query: String, configuration: RequestConfiguration? = RequestConfiguration()): Observable<Response<QuestionsResponse>> {
-        val encodedQuery=URLEncoder.encode(query, "utf-8")
-        return webAPI.get("/search?intitle=$encodedQuery&$configuration", QuestionsResponse::class.java)
+    fun searchQuestions(query: String, page: Int, configuration: RequestConfiguration? = RequestConfiguration()): Observable<Response<QuestionsResponse>> {
+        val encodedQuery = URLEncoder.encode(query, "utf-8")
+        return webAPI.get("/search?intitle=$encodedQuery&$configuration&page=$page", QuestionsResponse::class.java)
                 .subscribeOn(AndroidSchedulers.mainThread())
     }
 
