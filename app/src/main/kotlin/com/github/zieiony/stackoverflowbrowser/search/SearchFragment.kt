@@ -9,11 +9,11 @@ import android.view.View
 import carbon.recycler.RowArrayAdapter
 import carbon.recycler.RowFactory
 import com.github.zieiony.stackoverflowbrowser.ErrorFragment
+import com.github.zieiony.stackoverflowbrowser.PagingListFragment
 import com.github.zieiony.stackoverflowbrowser.R
 import com.github.zieiony.stackoverflowbrowser.api.StackOverflowAPI
 import com.github.zieiony.stackoverflowbrowser.api.data.Question
 import com.github.zieiony.stackoverflowbrowser.navigation.FragmentAnnotation
-import com.github.zieiony.stackoverflowbrowser.question.PagingListFragment
 import com.github.zieiony.stackoverflowbrowser.question.QuestionFragment
 import com.github.zieiony.stackoverflowbrowser.ui.KeyboardUtil
 import io.reactivex.android.schedulers.AndroidSchedulers

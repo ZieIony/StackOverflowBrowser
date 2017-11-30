@@ -5,6 +5,7 @@ import android.view.View
 import carbon.recycler.RowArrayAdapter
 import carbon.recycler.RowFactory
 import com.github.zieiony.stackoverflowbrowser.ErrorFragment
+import com.github.zieiony.stackoverflowbrowser.PagingListFragment
 import com.github.zieiony.stackoverflowbrowser.R
 import com.github.zieiony.stackoverflowbrowser.api.StackOverflowAPI
 import com.github.zieiony.stackoverflowbrowser.api.data.Answer

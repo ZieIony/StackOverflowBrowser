@@ -1,4 +1,4 @@
-package com.github.zieiony.stackoverflowbrowser.question
+package com.github.zieiony.stackoverflowbrowser
 
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
