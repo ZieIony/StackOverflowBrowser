@@ -3,7 +3,6 @@ package com.github.zieiony.stackoverflowbrowser
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import com.github.zieiony.stackoverflowbrowser.api.RequestConfiguration
-import com.github.zieiony.stackoverflowbrowser.navigation.BaseFragment
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
 

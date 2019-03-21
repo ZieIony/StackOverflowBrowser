@@ -7,7 +7,6 @@ import carbon.recycler.RowFactory
 import com.github.zieiony.stackoverflowbrowser.ErrorFragment
 import com.github.zieiony.stackoverflowbrowser.PagingListFragment
 import com.github.zieiony.stackoverflowbrowser.R
-import com.github.zieiony.stackoverflowbrowser.api.StackOverflowAPI
 import com.github.zieiony.stackoverflowbrowser.api.data.Answer
 import com.github.zieiony.stackoverflowbrowser.api.data.Question
 import com.github.zieiony.stackoverflowbrowser.navigation.FragmentAnnotation
@@ -19,7 +18,7 @@ import java.io.Serializable
 @FragmentAnnotation(layout = R.layout.fragment_question)
 class QuestionFragment : PagingListFragment() {
 
-    val adapter = RowArrayAdapter<Serializable, Answer>(Answer::class.java, RowFactory { parent -> AnswerRow(parent) })
+    private val adapter = RowArrayAdapter<Serializable, Answer>(Answer::class.java, RowFactory { parent -> AnswerRow(parent) })
 
     init {
         adapter.addFactory(Question::class.java, { parent -> FullQuestionRow(parent) })
@@ -59,7 +58,7 @@ class QuestionFragment : PagingListFragment() {
     private fun getAnswers(questionId: Long, page: Int) {
         currentPage.set(page)
         question_swipeRefresh.isRefreshing = true
-        StackOverflowAPI.requestAnswers(questionId)
+        api.requestAnswers(questionId)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ response ->
                     if (currentPage.get() > FIRST_PAGE) {
@@ -86,11 +85,6 @@ class QuestionFragment : PagingListFragment() {
         if (savedInstanceState.containsKey(ITEMS))
             adapter.items = savedInstanceState.getSerializable(ITEMS) as Array<out Serializable>?
         question = savedInstanceState.getSerializable(QUESTION) as Question
-    }
-
-    override fun onStop() {
-        super.onStop()
-        StackOverflowAPI.cancelRequests()
     }
 
     companion object {

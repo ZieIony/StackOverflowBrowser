@@ -3,16 +3,17 @@ package com.github.zieiony.stackoverflowbrowser.navigation
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import dagger.android.support.DaggerAppCompatActivity
 import kotlinx.android.synthetic.main.activity_base.*
 import java.io.Serializable
 
-open class BaseActivity : AppCompatActivity(), NavigationParent {
+open class NavigationActivity : DaggerAppCompatActivity(), NavigationParent {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_base)
 
         if (savedInstanceState == null) {
-            val fragment = intent.getSerializableExtra(FRAGMENT) as Class<BaseFragment>?
+            val fragment = intent.getSerializableExtra(FRAGMENT) as Class<NavigationFragment>?
             val arguments = intent.getSerializableExtra(ARGUMENTS) as Map<String, Serializable>?
             if (fragment != null)
                 navigate(fragment, arguments)
@@ -21,11 +22,11 @@ open class BaseActivity : AppCompatActivity(), NavigationParent {
 
     override fun getRoot(): NavigationParent = this
 
-    override fun navigate(fragmentClass: Class<out BaseFragment>, arguments: Map<String, Serializable>?) {
-        var activityClass = BaseActivity::class.java
+    override fun navigate(fragmentClass: Class<out NavigationFragment>, arguments: Map<String, Serializable>?) {
+        var activityClass = NavigationActivity::class.java
         val annotation = fragmentClass.getAnnotation(FragmentAnnotation::class.java)
         if (annotation != null)
-            activityClass = annotation.activity.java as Class<BaseActivity>
+            activityClass = annotation.activity.java as Class<NavigationActivity>
 
         if (activityClass != javaClass) {
             navigateToActivity(activityClass, fragmentClass, arguments)
@@ -34,7 +35,7 @@ open class BaseActivity : AppCompatActivity(), NavigationParent {
         }
     }
 
-    private fun navigateToActivity(activity: Class<BaseActivity>, fragmentClass: Class<out BaseFragment>, arguments: Map<String, Serializable>?) {
+    private fun navigateToActivity(activity: Class<NavigationActivity>, fragmentClass: Class<out NavigationFragment>, arguments: Map<String, Serializable>?) {
         val intent = Intent(this, activity)
         intent.putExtra(FRAGMENT, fragmentClass)
         if (arguments != null)
@@ -42,7 +43,7 @@ open class BaseActivity : AppCompatActivity(), NavigationParent {
         startActivity(intent)
     }
 
-    private fun navigateToFragment(fragmentClass: Class<out BaseFragment>, arguments: Map<String, Serializable>?) {
+    private fun navigateToFragment(fragmentClass: Class<out NavigationFragment>, arguments: Map<String, Serializable>?) {
         val fragment = fragmentClass.newInstance()
         val bundle = Bundle()
         if (arguments != null) {

@@ -4,6 +4,6 @@
 
     <application
         android:allowBackup="true">
-        <activity android:name=".BaseActivity"/>
+        <activity android:name=".NavigationActivity"/>
     </application>
 </manifest>

@@ -2,31 +2,31 @@ package com.github.zieiony.stackoverflowbrowser.navigation
 
 import android.content.Intent
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import dagger.android.support.DaggerFragment
 import java.io.Serializable
 
-open class BaseFragment : Fragment(), NavigationParent {
+open class NavigationFragment : DaggerFragment(), NavigationParent {
     init {
         if (arguments == null)
             arguments = Bundle()
     }
 
-    override fun navigate(fragmentClass: Class<out BaseFragment>, arguments: Map<String, Serializable>?) {
-        var activity = BaseActivity::class.java
+    override fun navigate(fragmentClass: Class<out NavigationFragment>, arguments: Map<String, Serializable>?) {
+        var activity = NavigationActivity::class.java
         val annotation = fragmentClass.getAnnotation(FragmentAnnotation::class.java)
         if (annotation != null)
-            activity = annotation.activity.java as Class<BaseActivity>
+            activity = annotation.activity.java as Class<NavigationActivity>
 
         navigateToActivity(activity, fragmentClass, arguments)
     }
 
-    private fun navigateToActivity(activityClass: Class<BaseActivity>, fragmentClass: Class<out BaseFragment>, arguments: Map<String, Serializable>?) {
+    private fun navigateToActivity(activityClass: Class<NavigationActivity>, fragmentClass: Class<out NavigationFragment>, arguments: Map<String, Serializable>?) {
         val intent = Intent(activity, activityClass)
-        intent.putExtra(BaseActivity.FRAGMENT, fragmentClass)
-        intent.putExtra(BaseActivity.ARGUMENTS, arguments as Serializable)
+        intent.putExtra(NavigationActivity.FRAGMENT, fragmentClass)
+        intent.putExtra(NavigationActivity.ARGUMENTS, arguments as Serializable)
         startActivity(intent)
     }
 
