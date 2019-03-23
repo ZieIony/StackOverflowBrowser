@@ -1,9 +1,9 @@
 package com.github.zieiony.stackoverflowbrowser.search
 
 import android.arch.lifecycle.MutableLiveData
-import android.arch.lifecycle.ViewModel
+import com.github.zieiony.stackoverflowbrowser.BaseViewModel
 import com.github.zieiony.stackoverflowbrowser.PagingListFragment
-import com.github.zieiony.stackoverflowbrowser.api.StackOverflowAPI
+import com.github.zieiony.stackoverflowbrowser.api.IQuestionRepository
 import io.reactivex.android.schedulers.AndroidSchedulers
 import java.io.Serializable
 
@@ -14,18 +14,25 @@ sealed class SearchState {
     class Error(var error: Throwable) : SearchState()
 }
 
-class SearchViewModel : ViewModel() {
-    var items: Array<out Serializable> = arrayOf(EmptyValue())
-    var liveData = MutableLiveData<SearchState>().also { it.value = SearchState.Empty() }
+class SearchViewModel : BaseViewModel {
+
+    private var repository: IQuestionRepository
+    private var items: Array<out Serializable>
+    private var liveData: MutableLiveData<SearchState>
+
+    constructor(repository: IQuestionRepository) : super() {
+        this.repository = repository
+        this.items = arrayOf(EmptyValue())
+        this.liveData = MutableLiveData<SearchState>().also { it.value = SearchState.Empty() }
+    }
 
     fun getState(): MutableLiveData<SearchState> {
         return liveData
     }
 
-    fun search(api: StackOverflowAPI, query: String, page: Int) {
+    fun search(query: String, page: Int) {
         liveData.value = SearchState.Searching()
-        api.cancelRequests()
-        val disposable = api.searchQuestions(query, page)
+        addDisposable(repository.getQuestions(query, page)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ response ->
                     items = when {
@@ -36,6 +43,6 @@ class SearchViewModel : ViewModel() {
                     liveData.value = SearchState.Results(items, !response.data.has_more!!)
                 }, { throwable ->
                     liveData.value = SearchState.Error(throwable)
-                })
+                }))
     }
 }

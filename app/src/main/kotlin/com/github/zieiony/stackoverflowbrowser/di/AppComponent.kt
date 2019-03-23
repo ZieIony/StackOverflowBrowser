@@ -2,6 +2,7 @@ package com.github.zieiony.stackoverflowbrowser.di
 
 import com.github.zieiony.stackoverflowbrowser.StackOverflowApplication
 import com.github.zieiony.stackoverflowbrowser.api.di.APIModule
+import com.github.zieiony.stackoverflowbrowser.api.di.DataModule
 import dagger.BindsInstance
 import dagger.Component
 import dagger.android.AndroidInjectionModule
@@ -13,6 +14,7 @@ import javax.inject.Singleton
 @Component(modules = [
     AndroidInjectionModule::class,
     APIModule::class,
+    DataModule::class,
     ScreenModule::class])
 interface AppComponent : AndroidInjector<StackOverflowApplication> {
 

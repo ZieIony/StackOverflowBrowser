@@ -47,6 +47,3 @@ dependencies {
     api 'tk.zielony:carbon:0.15.3'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
-repositories {
-    mavenCentral()
-}

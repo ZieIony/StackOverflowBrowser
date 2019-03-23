@@ -26,8 +26,8 @@ class ErrorFragment : NavigationFragment() {
 
         fun makeStep(title: String, message: String): NavigationStep {
             val arguments = HashMap<String, Serializable>()
-            arguments.put(ERROR_TITLE, title)
-            arguments.put(ERROR_MESSAGE, message)
+            arguments[ERROR_TITLE] = title
+            arguments[ERROR_MESSAGE] = message
             return NavigationStep(ErrorFragment::class.java, arguments)
         }
     }

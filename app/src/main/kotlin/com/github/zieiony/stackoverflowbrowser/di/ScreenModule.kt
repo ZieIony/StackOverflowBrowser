@@ -19,7 +19,7 @@ abstract class ScreenModule {
     @ContributesAndroidInjector(modules = [SearchModule::class])
     abstract fun bindSearchFragment(): SearchFragment
 
-    @ContributesAndroidInjector()
+    @ContributesAndroidInjector(modules = [QuestionModule::class])
     abstract fun bindQuestionFragment(): QuestionFragment
 
 }

@@ -2,6 +2,7 @@ package com.github.zieiony.stackoverflowbrowser.search
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
+import android.arch.lifecycle.Observer
 import android.os.Bundle
 import android.support.v4.view.animation.FastOutSlowInInterpolator
 import android.text.TextUtils
@@ -19,6 +20,8 @@ import pl.zielony.statemachine.OnStateChangedListener
 import pl.zielony.statemachine.StateMachine
 import java.io.Serializable
 import javax.inject.Inject
+import com.github.zieiony.stackoverflowbrowser.R
+import com.github.zieiony.stackoverflowbrowser.base.RefreshingDelegate
 
 @FragmentAnnotation(layout = R.layout.fragment_search)
 class SearchFragment : PagingListFragment() {
@@ -28,7 +31,9 @@ class SearchFragment : PagingListFragment() {
     }
 
     @Inject
-    lateinit var searchViewModel:SearchViewModel
+    lateinit var searchViewModel: SearchViewModel
+
+    override var refreshing: Boolean by RefreshingDelegate {search_swipeRefresh}
 
     private val stateMachine = StateMachine<SearchFragmentState>(SearchFragmentState.CLOSED)
 
@@ -49,7 +54,7 @@ class SearchFragment : PagingListFragment() {
             if (TextUtils.isEmpty(query))
                 return@setOnEditorActionListener false
             arguments!!.putString(CURRENT_QUERY, query)
-            search_swipeRefresh.isEnabled=true
+            search_swipeRefresh.isEnabled = true
             searchQuestions(query, FIRST_PAGE)
             true
         }
@@ -70,25 +75,21 @@ class SearchFragment : PagingListFragment() {
         if (savedInstanceState != null)
             onRestoreInstanceState(savedInstanceState)
 
-        when {
-            searchViewModel.getState().value is SearchState.Empty -> {
-                search_swipeRefresh.isRefreshing = false
+        searchViewModel.getState().observe(this, Observer{
+            when (it) {
+                is SearchState.Empty -> refreshing = false
+                is SearchState.Searching -> refreshing = true
+                is SearchState.Results -> {
+                    adapter.items = it.items
+                    isLastPage.set(it.lastPage)
+                    refreshing = false
+                }
+                is SearchState.Error -> {
+                    refreshing = false
+                    navigate(ErrorFragment.makeStep(resources.getString(R.string.error_title_requestFailed), it.error.message.toString()))
+                }
             }
-            searchViewModel.getState().value is SearchState.Searching -> {
-                search_swipeRefresh.isRefreshing = true
-            }
-            searchViewModel.getState().value is SearchState.Results -> {
-                val results = searchViewModel.getState().value as SearchState.Results
-                adapter.items = results.items
-                isLastPage.set(results.lastPage)
-                search_swipeRefresh.isRefreshing = false
-            }
-            searchViewModel.getState().value is SearchState.Error -> {
-                val error = searchViewModel.getState().value as SearchState.Error
-                search_swipeRefresh.isRefreshing = false
-                navigate(ErrorFragment.makeStep(resources.getString(R.string.error_title_requestFailed), error.toString()))
-            }
-        }
+        })
     }
 
     private fun setupStateMachine() {
@@ -140,15 +141,13 @@ class SearchFragment : PagingListFragment() {
         animator.start()
     }
 
-    override fun isRefreshing(): Boolean = search_swipeRefresh.isRefreshing
-
     override fun loadNextPage() {
         searchQuestions(arguments!!.getString(CURRENT_QUERY)!!, currentPage.get() + 1)
     }
 
     private fun searchQuestions(query: String, page: Int) {
         currentPage.set(page)
-        searchViewModel.search(api, query, page)
+        searchViewModel.search(query, page)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -162,6 +161,8 @@ class SearchFragment : PagingListFragment() {
         if (savedInstanceState.containsKey(ITEMS))
             adapter.items = savedInstanceState.getSerializable(ITEMS) as Array<out Serializable>?
         stateMachine.restore(savedInstanceState)
+        if(stateMachine.state==SearchFragmentState.OPEN)
+            search_bar.visibility=View.VISIBLE
     }
 
     companion object {

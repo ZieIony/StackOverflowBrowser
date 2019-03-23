@@ -33,12 +33,7 @@ class StackOverflowAPI {
                 .subscribeOn(Schedulers.io())
     }
 
-    fun cancelRequests() {
-        webAPI.cancelRequests()
-    }
-
     companion object {
         const val DEFAULT_API_URL = "https://api.stackexchange.com/2.2"
-
     }
 }
