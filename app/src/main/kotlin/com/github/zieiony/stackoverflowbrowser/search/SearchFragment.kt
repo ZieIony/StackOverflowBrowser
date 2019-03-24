@@ -9,25 +9,26 @@ import android.text.TextUtils
 import android.view.View
 import carbon.recycler.RowArrayAdapter
 import carbon.recycler.RowFactory
-import com.github.zieiony.stackoverflowbrowser.ErrorFragment
-import com.github.zieiony.stackoverflowbrowser.PagingListFragment
+import com.github.zieiony.stackoverflowbrowser.ErrorRow
+import com.github.zieiony.stackoverflowbrowser.ErrorValue
 import com.github.zieiony.stackoverflowbrowser.api.data.Question
+import com.github.zieiony.stackoverflowbrowser.base.PagingListFragment
+import com.github.zieiony.stackoverflowbrowser.base.RefreshingDelegate
 import com.github.zieiony.stackoverflowbrowser.navigation.FragmentAnnotation
 import com.github.zieiony.stackoverflowbrowser.question.QuestionFragment
 import com.github.zieiony.stackoverflowbrowser.ui.KeyboardUtil
 import kotlinx.android.synthetic.main.fragment_search.*
-import pl.zielony.statemachine.OnStateChangedListener
-import pl.zielony.statemachine.StateMachine
 import java.io.Serializable
 import javax.inject.Inject
 import com.github.zieiony.stackoverflowbrowser.R
-import com.github.zieiony.stackoverflowbrowser.base.RefreshingDelegate
+import com.github.zieiony.stackoverflowbrowser.ui.widget.OnSearchListener
 
 @FragmentAnnotation(layout = R.layout.fragment_search)
 class SearchFragment : PagingListFragment() {
 
     private val adapter = RowArrayAdapter<Serializable, Question>(Question::class.java, RowFactory<Question> { parent -> QuestionRow(parent) }).also {
         it.addFactory(EmptyValue::class.java, { parent -> EmptyRow(parent) })
+        it.addFactory(ErrorValue::class.java, { parent -> ErrorRow(parent) })
     }
 
     @Inject
@@ -35,12 +36,8 @@ class SearchFragment : PagingListFragment() {
 
     override var refreshing: Boolean by RefreshingDelegate {search_swipeRefresh}
 
-    private val stateMachine = StateMachine<SearchFragmentState>(SearchFragmentState.CLOSED)
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        setupStateMachine()
 
         search_recycler.layoutManager = layoutManager
         search_recycler.adapter = adapter
@@ -48,34 +45,20 @@ class SearchFragment : PagingListFragment() {
         adapter.setOnItemClickedListener(Question::class.java, { _, question, _ -> navigate(QuestionFragment.makeStep(question as Question)) })
         adapter.items = arrayOf(EmptyValue())
 
-        search_query.setOnEditorActionListener { textView, i, keyEvent ->
-            KeyboardUtil.hideKeyboard(activity)
-            val query = textView.text.toString()
-            if (TextUtils.isEmpty(query))
-                return@setOnEditorActionListener false
-            arguments!!.putString(CURRENT_QUERY, query)
-            search_swipeRefresh.isEnabled = true
-            searchQuestions(query, FIRST_PAGE)
-            true
-        }
+        search_view.query = "Java"
+        search_view.setOnSearchListener(object : OnSearchListener {
+            override fun onSearch(query: String) = search(query)
+        })
         search_swipeRefresh.setOnRefreshListener {
-            searchQuestions(arguments!!.getString(CURRENT_QUERY)!!, FIRST_PAGE)
+            loadPage(FIRST_PAGE)
         }
 
-        search_openSearch.setOnClickListener { stateMachine.setState(SearchFragmentState.OPEN) }
-        search_close.setOnClickListener { stateMachine.setState(SearchFragmentState.CLOSED) }
-
-        search_search.setOnClickListener {
-            KeyboardUtil.hideKeyboard(activity)
-            if (search_query.text.isEmpty())
-                return@setOnClickListener
-            searchQuestions(search_query.text.toString(), FIRST_PAGE)
-        }
+        search_openSearch.setOnClickListener { search_view.open(search_openSearch) }
 
         if (savedInstanceState != null)
             onRestoreInstanceState(savedInstanceState)
 
-        searchViewModel.getState().observe(this, Observer{
+        searchViewModel.getState().observe(this, Observer {
             when (it) {
                 is SearchState.Empty -> refreshing = false
                 is SearchState.Searching -> refreshing = true
@@ -86,83 +69,34 @@ class SearchFragment : PagingListFragment() {
                 }
                 is SearchState.Error -> {
                     refreshing = false
-                    navigate(ErrorFragment.makeStep(resources.getString(R.string.error_title_requestFailed), it.error.message.toString()))
+                    adapter.items = arrayOf(ErrorValue(it.error.message.toString()))
                 }
             }
         })
     }
 
-    private fun setupStateMachine() {
-        stateMachine.addEdge(SearchFragmentState.CLOSED, SearchFragmentState.OPEN, OnStateChangedListener {
-            search_bar.visibility = View.VISIBLE
-            if (isResumed) {
-                openSearchView()
-            }
-            KeyboardUtil.showKeyboard(search_query)
-        })
-
-        stateMachine.addEdge(SearchFragmentState.OPEN, SearchFragmentState.CLOSED, OnStateChangedListener {
-            if (isResumed) {
-                closeSearchView()
-            } else {
-                search_bar.visibility = View.INVISIBLE
-            }
-            KeyboardUtil.hideKeyboard(activity)
-        })
+    private fun search(query: String) {
+        KeyboardUtil.hideKeyboard(search_view)
+        if (TextUtils.isEmpty(query))
+            return
+        arguments!!.putString(CURRENT_QUERY, query)
+        search_swipeRefresh.isEnabled = true
+        loadPage(FIRST_PAGE)
     }
 
-    private fun openSearchView() {
-        // TODO not business logic - move to a widget
-        val setLocation = IntArray(2)
-        search_bar.getLocationOnScreen(setLocation)
-        val sbLocation = IntArray(2)
-        search_openSearch.getLocationOnScreen(sbLocation)
-        val animator = search_bar.createCircularReveal(sbLocation[0] - setLocation[0] + search_bar.width / 2,
-                search_bar.height / 2, 0f, search_bar.width.toFloat())
-        animator.interpolator = FastOutSlowInInterpolator()
-        animator.start()
-    }
-
-    private fun closeSearchView() {
-        // TODO not business logic - move to a widget
-        val setLocation = IntArray(2)
-        search_bar.getLocationOnScreen(setLocation)
-        val sbLocation = IntArray(2)
-        search_openSearch.getLocationOnScreen(sbLocation)
-        val animator = search_bar.createCircularReveal(sbLocation[0] - setLocation[0] + search_bar.width / 2,
-                search_bar.height / 2,
-                search_bar.width.toFloat(), 0f)
-        animator.interpolator = FastOutSlowInInterpolator()
-        animator.addListener(object : AnimatorListenerAdapter() {
-            override fun onAnimationEnd(animation: Animator) {
-                search_bar.visibility = View.INVISIBLE
-            }
-        })
-        animator.start()
-    }
-
-    override fun loadNextPage() {
-        searchQuestions(arguments!!.getString(CURRENT_QUERY)!!, currentPage.get() + 1)
-    }
-
-    private fun searchQuestions(query: String, page: Int) {
-        currentPage.set(page)
-        searchViewModel.search(query, page)
+    override fun loadPage(page:Int) {
+        searchViewModel.search(arguments!!.getString(CURRENT_QUERY)!!, page)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         if (adapter.items.isNotEmpty())
             outState.putSerializable(ITEMS, adapter.items)
-        stateMachine.save(outState)
     }
 
     private fun onRestoreInstanceState(savedInstanceState: Bundle) {
         if (savedInstanceState.containsKey(ITEMS))
             adapter.items = savedInstanceState.getSerializable(ITEMS) as Array<out Serializable>?
-        stateMachine.restore(savedInstanceState)
-        if(stateMachine.state==SearchFragmentState.OPEN)
-            search_bar.visibility=View.VISIBLE
     }
 
     companion object {

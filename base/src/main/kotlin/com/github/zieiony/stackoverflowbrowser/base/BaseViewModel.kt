@@ -1,4 +1,4 @@
-package com.github.zieiony.stackoverflowbrowser
+package com.github.zieiony.stackoverflowbrowser.base
 
 import android.arch.lifecycle.ViewModel
 import io.reactivex.disposables.CompositeDisposable

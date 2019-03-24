@@ -4,7 +4,6 @@
     <string name="search_title">StackOverflow</string>
     <string name="search_empty">Nothing\'s here\n\nEnter a query and confirm\nto search for questions</string>
 
-    <string name="error_confirm">ok</string>
     <string name="error_title_requestFailed">Request failed</string>
 
     <string name="answerRow_answeredBy">answered by</string>

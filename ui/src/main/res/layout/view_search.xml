@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<carbon.widget.LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/search_bar"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingLeft="@dimen/carbon_toolbarItemMargin"
+    android:paddingRight="@dimen/carbon_toolbarItemMargin">
+
+    <carbon.widget.ImageView
+        android:id="@+id/search_close"
+        style="@style/carbon_ImageView.IconButton"
+        android:layout_gravity="center_vertical"
+        android:src="@raw/carbon_clear"/>
+
+    <carbon.widget.EditText
+        android:id="@+id/search_query"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/carbon_toolbarHeight"
+        android:layout_marginStart="@dimen/carbon_margin"
+        android:layout_marginLeft="@dimen/carbon_margin"
+        android:layout_weight="1"
+        android:background="@null"
+        android:imeOptions="flagNoExtractUi"
+        android:padding="0dp"/>
+
+    <carbon.widget.ImageView
+        android:id="@+id/search_search"
+        style="@style/carbon_ImageView.IconButton"
+        android:layout_gravity="center_vertical"
+        android:src="@raw/ic_search_24px"/>
+
+</carbon.widget.LinearLayout>

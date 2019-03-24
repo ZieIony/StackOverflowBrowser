@@ -1,9 +1,9 @@
 package com.github.zieiony.stackoverflowbrowser.question
 
 import android.arch.lifecycle.MutableLiveData
-import com.github.zieiony.stackoverflowbrowser.BaseViewModel
-import com.github.zieiony.stackoverflowbrowser.PagingListFragment
 import com.github.zieiony.stackoverflowbrowser.api.IQuestionRepository
+import com.github.zieiony.stackoverflowbrowser.base.BaseViewModel
+import com.github.zieiony.stackoverflowbrowser.base.PagingListFragment
 import io.reactivex.android.schedulers.AndroidSchedulers
 import java.io.Serializable
 

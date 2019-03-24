@@ -1,9 +1,8 @@
-package com.github.zieiony.stackoverflowbrowser
+package com.github.zieiony.stackoverflowbrowser.base
 
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import com.github.zieiony.stackoverflowbrowser.api.RequestConfiguration
-import com.github.zieiony.stackoverflowbrowser.base.BaseFragment
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -11,7 +10,7 @@ abstract class PagingListFragment : BaseFragment() {
 
     val layoutManager = LinearLayoutManager(context)
     var isLastPage = AtomicBoolean(false)
-    var currentPage = AtomicInteger(FIRST_PAGE)
+    private var currentPage = AtomicInteger(FIRST_PAGE)
 
     val onScrollListener = object : RecyclerView.OnScrollListener() {
         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -22,18 +21,17 @@ abstract class PagingListFragment : BaseFragment() {
                 if (layoutManager.childCount + firstVisibleItemPosition >= layoutManager.itemCount
                         && firstVisibleItemPosition >= 0
                         && layoutManager.itemCount >= RequestConfiguration.PAGE_SIZE) {
-                    loadNextPage()
+                    loadPage(currentPage.incrementAndGet())
                 }
             }
         }
     }
 
-    abstract fun loadNextPage()
+    abstract fun loadPage(page: Int)
 
     abstract var refreshing: Boolean
 
     companion object {
-        const val FIRST_PAGE = 1
-
+        const val FIRST_PAGE = 1    // TODO: this is not obvious dependency on the stackoverflow api
     }
 }

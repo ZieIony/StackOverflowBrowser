@@ -5,8 +5,9 @@ import android.os.Bundle
 import android.view.View
 import carbon.recycler.RowArrayAdapter
 import carbon.recycler.RowFactory
-import com.github.zieiony.stackoverflowbrowser.ErrorFragment
-import com.github.zieiony.stackoverflowbrowser.PagingListFragment
+import com.github.zieiony.stackoverflowbrowser.ErrorRow
+import com.github.zieiony.stackoverflowbrowser.ErrorValue
+import com.github.zieiony.stackoverflowbrowser.base.PagingListFragment
 import com.github.zieiony.stackoverflowbrowser.api.data.Answer
 import com.github.zieiony.stackoverflowbrowser.api.data.Question
 import com.github.zieiony.stackoverflowbrowser.base.RefreshingDelegate
@@ -32,15 +33,19 @@ class QuestionFragment : PagingListFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        if (savedInstanceState == null)
+        if (savedInstanceState != null) {
+            onRestoreInstanceState(savedInstanceState)
+        } else {
             question = arguments!!.get(QUESTION) as Question
+            loadPage(FIRST_PAGE)
+        }
 
         question_toolbar.title = question.title
 
         initAdapter()
 
         question_swipeRefresh.setOnRefreshListener {
-            getAnswers(question.question_id!!, FIRST_PAGE)
+            loadPage(FIRST_PAGE)
         }
 
         questionViewModel.getState().observe(this, Observer {
@@ -53,33 +58,23 @@ class QuestionFragment : PagingListFragment() {
                 }
                 is QuestionState.Error -> {
                     question_swipeRefresh.isRefreshing = false
-                    navigate(ErrorFragment.makeStep(resources.getString(R.string.error_title_requestFailed), it.error.message.toString()))
+                    adapter.items = arrayOf(ErrorValue(it.error.message.toString()))
                 }
             }
         })
-
-        if (savedInstanceState != null) {
-            onRestoreInstanceState(savedInstanceState)
-        } else {
-            getAnswers(question.question_id!!, FIRST_PAGE)
-        }
     }
 
     private fun initAdapter() {
         adapter.addFactory(Question::class.java, { parent -> FullQuestionRow(parent) })
+        adapter.addFactory(ErrorValue::class.java, { parent -> ErrorRow(parent) })
         adapter.items = arrayOf(question)
         question_recycler.layoutManager = layoutManager
         question_recycler.adapter = adapter
         question_recycler.addOnScrollListener(onScrollListener)
     }
 
-    override fun loadNextPage() {
-        getAnswers(question.question_id!!, currentPage.get() + 1)
-    }
-
-    private fun getAnswers(questionId: Long, page: Int) {
-        currentPage.set(page)
-        questionViewModel.getAnswers(questionId, page)
+    override fun loadPage(page:Int) {
+        questionViewModel.getAnswers(question.question_id!!, page)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

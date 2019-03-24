@@ -21,5 +21,4 @@ abstract class ScreenModule {
 
     @ContributesAndroidInjector(modules = [QuestionModule::class])
     abstract fun bindQuestionFragment(): QuestionFragment
-
 }

@@ -12,7 +12,7 @@ import tk.zielony.dataapi.WebAPI
 import javax.inject.Inject
 import javax.inject.Named
 
-class StackOverflowAPI {
+open class StackOverflowAPI {
 
     private val configuration: Configuration
     private var webAPI: WebAPI
@@ -23,12 +23,12 @@ class StackOverflowAPI {
         this.webAPI = WebAPI(apiUrl, configuration)
     }
 
-    fun searchQuestions(query: String, page: Int, configuration: RequestConfiguration? = RequestConfiguration()): Observable<Response<QuestionsResponse>> {
+    open fun searchQuestions(query: String, page: Int, configuration: RequestConfiguration? = RequestConfiguration()): Observable<Response<QuestionsResponse>> {
         return webAPI.get("/search?intitle=$query&$configuration&page=$page", QuestionsResponse::class.java)
                 .subscribeOn(Schedulers.io())
     }
 
-    fun requestAnswers(questionId: Long, configuration: RequestConfiguration? = RequestConfiguration()): Observable<Response<AnswersResponse>> {
+    open fun requestAnswers(questionId: Long, configuration: RequestConfiguration? = RequestConfiguration()): Observable<Response<AnswersResponse>> {
         return webAPI.get("/questions/$questionId/answers?$configuration", AnswersResponse::class.java)
                 .subscribeOn(Schedulers.io())
     }
