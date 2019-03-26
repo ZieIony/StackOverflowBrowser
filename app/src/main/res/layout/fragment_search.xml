@@ -9,11 +9,13 @@
     <carbon.widget.FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
         app:carbon_elevation="@dimen/carbon_elevationToolbar">
 
         <carbon.widget.Toolbar
             android:layout_width="match_parent"
             android:layout_height="@dimen/carbon_toolbarHeight"
+            android:background="@null"
             android:text="@string/search_title"
             app:carbon_elevation="0dp"
             app:carbon_icon="@null">
@@ -26,10 +28,10 @@
 
         <com.github.zieiony.stackoverflowbrowser.ui.widget.SearchView
             android:id="@+id/search_view"
-            android:visibility="invisible"
-            android:background="?attr/carbon_colorBackground"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:background="?attr/carbon_colorBackground"
+            android:visibility="invisible"/>
 
     </carbon.widget.FrameLayout>
 

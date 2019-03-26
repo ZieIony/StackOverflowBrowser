@@ -71,8 +71,7 @@
 
             <carbon.widget.ImageView
                 android:id="@+id/answerRow_ownerPicture"
-                android:layout_width="@dimen/carbon_avatarSize"
-                android:layout_height="@dimen/carbon_avatarSize"
+                style="@style/Avatar"
                 android:layout_below="@id/answerRow_askedBy"/>
 
             <carbon.widget.TextView

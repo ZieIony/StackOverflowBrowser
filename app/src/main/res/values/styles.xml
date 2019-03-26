@@ -40,4 +40,8 @@
         <item name="android:layout_marginRight">4dp</item>
     </style>
 
+    <style name="Avatar" parent="carbon_ImageView.Avatar">
+        <item name="carbon_cornerRadius">2dp</item>
+    </style>
+
 </resources>
