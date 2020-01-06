@@ -1,48 +1,47 @@
 package com.github.zieiony.stackoverflowbrowser.search
 
-import android.arch.lifecycle.MutableLiveData
+import com.github.zieiony.base.arch.BaseState
+import com.github.zieiony.base.arch.BaseViewModel
+import com.github.zieiony.base.util.Logger
 import com.github.zieiony.stackoverflowbrowser.api.IQuestionRepository
-import com.github.zieiony.stackoverflowbrowser.base.BaseViewModel
-import com.github.zieiony.stackoverflowbrowser.base.PagingListFragment
+import com.github.zieiony.stackoverflowbrowser.api.QuestionRepository.Companion.FIRST_PAGE
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import java.io.Serializable
 
-sealed class SearchState {
+sealed class SearchState:BaseState {
     class Empty : SearchState()
     class Searching : SearchState()
     class Results(var items: Array<out Serializable>,var lastPage: Boolean) : SearchState()
     class Error(var error: Throwable) : SearchState()
 }
 
-class SearchViewModel : BaseViewModel {
+class SearchViewModel : BaseViewModel<SearchState> {
 
     private var repository: IQuestionRepository
     private var items: Array<out Serializable>
-    private var liveData: MutableLiveData<SearchState>
 
-    constructor(repository: IQuestionRepository) : super() {
+    constructor(logger: Logger, repository: IQuestionRepository) : super(logger) {
         this.repository = repository
         this.items = arrayOf(EmptyValue())
-        this.liveData = MutableLiveData<SearchState>().also { it.value = SearchState.Empty() }
-    }
-
-    fun getState(): MutableLiveData<SearchState> {
-        return liveData
+        this.state.value = SearchState.Empty()
     }
 
     fun search(query: String, page: Int) {
-        liveData.value = SearchState.Searching()
-        addDisposable(repository.getQuestions(query, page)
+        state.value = SearchState.Searching()
+        repository.getQuestions(query, page)
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ response ->
                     items = when {
-                        page > PagingListFragment.FIRST_PAGE -> arrayOf(*items, *response.data.items!!)
-                        response.data.items!!.isNotEmpty() -> response.data.items!!
+                        page > FIRST_PAGE -> arrayOf(*items, *response.items!!)
+                        response.items!!.isNotEmpty() -> response.items!!
                         else -> arrayOf(EmptyValue())
                     }
-                    liveData.value = SearchState.Results(items, !response.data.has_more!!)
+                    state.value = SearchState.Results(items, !response.has_more!!)
                 }, { throwable ->
-                    liveData.value = SearchState.Error(throwable)
-                }))
+                    state.value = SearchState.Error(throwable)
+                })
+                .disposeOnCleared()
     }
 }

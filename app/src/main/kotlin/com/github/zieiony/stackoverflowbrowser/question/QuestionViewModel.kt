@@ -1,46 +1,46 @@
 package com.github.zieiony.stackoverflowbrowser.question
 
-import android.arch.lifecycle.MutableLiveData
+import com.github.zieiony.base.arch.BaseState
+import com.github.zieiony.base.arch.BaseViewModel
+import com.github.zieiony.base.util.Logger
 import com.github.zieiony.stackoverflowbrowser.api.IQuestionRepository
-import com.github.zieiony.stackoverflowbrowser.base.BaseViewModel
-import com.github.zieiony.stackoverflowbrowser.base.PagingListFragment
+import com.github.zieiony.stackoverflowbrowser.api.QuestionRepository.Companion.FIRST_PAGE
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import java.io.Serializable
 
-sealed class QuestionState {
-    class Searching : QuestionState()
-    class Results(var items: Array<out Serializable>,var lastPage: Boolean) : QuestionState()
+sealed class QuestionState : BaseState {
+    object Searching : QuestionState()
+    class Results(var items: Array<out Serializable>, var lastPage: Boolean) : QuestionState()
     class Error(var error: Throwable) : QuestionState()
 }
 
-class QuestionViewModel : BaseViewModel {
+class QuestionViewModel(
+        logger: Logger,
+        private var repository: IQuestionRepository
+) : BaseViewModel<QuestionState>(logger) {
 
-    private var repository: IQuestionRepository
     private var items: Array<out Serializable>
-    private var liveData: MutableLiveData<QuestionState>
 
-    constructor(repository: IQuestionRepository) : super() {
-        this.repository = repository
+    init {
         this.items = emptyArray()
-        this.liveData = MutableLiveData<QuestionState>().also { it.value = QuestionState.Searching() }
+        state.value = QuestionState.Searching
     }
 
-    fun getState(): MutableLiveData<QuestionState> {
-        return liveData
-    }
-
-     fun getAnswers(questionId: Long, page: Int) {
-        liveData.value = QuestionState.Searching()
-        addDisposable(repository.getAnswers(questionId)
+    fun getAnswers(questionId: Long, page: Int) {
+        state.value = QuestionState.Searching
+        repository.getAnswers(questionId)
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ response ->
                     items = when {
-                        page > PagingListFragment.FIRST_PAGE -> arrayOf(*items, *response.data.items!!)
-                        else -> response.data.items!!
+                        page > FIRST_PAGE -> arrayOf(*items, *response.items!!)
+                        else -> response.items!!
                     }
-                    liveData.value = QuestionState.Results(items, !response.data.has_more!!)
+                    state.value = QuestionState.Results(items, !response.has_more!!)
                 }, { throwable ->
-                    liveData.value = QuestionState.Error(throwable)
-                }))
+                    state.value = QuestionState.Error(throwable)
+                })
+                .disposeOnCleared()
     }
 }

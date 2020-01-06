@@ -1,104 +1,112 @@
 package com.github.zieiony.stackoverflowbrowser.question
 
-import android.arch.lifecycle.Observer
 import android.os.Bundle
 import android.view.View
+import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.LinearLayoutManager
 import carbon.recycler.RowArrayAdapter
-import carbon.recycler.RowFactory
+import carbon.widget.RecyclerView
+import com.github.zieiony.base.app.FragmentArgumentDelegate
+import com.github.zieiony.base.app.Navigator
+import com.github.zieiony.base.app.ScreenAnnotation
 import com.github.zieiony.stackoverflowbrowser.ErrorRow
 import com.github.zieiony.stackoverflowbrowser.ErrorValue
-import com.github.zieiony.stackoverflowbrowser.base.PagingListFragment
+import com.github.zieiony.stackoverflowbrowser.R
+import com.github.zieiony.stackoverflowbrowser.StackOverflowFragment
+import com.github.zieiony.stackoverflowbrowser.api.QuestionRepository.Companion.FIRST_PAGE
 import com.github.zieiony.stackoverflowbrowser.api.data.Answer
 import com.github.zieiony.stackoverflowbrowser.api.data.Question
-import com.github.zieiony.stackoverflowbrowser.base.RefreshingDelegate
-import com.github.zieiony.stackoverflowbrowser.navigation.FragmentAnnotation
-import com.github.zieiony.stackoverflowbrowser.navigation.NavigationStep
+import com.github.zieiony.stackoverflowbrowser.search.SearchFragment
 import kotlinx.android.synthetic.main.fragment_question.*
-import com.github.zieiony.stackoverflowbrowser.R
 import java.io.Serializable
+import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.atomic.AtomicInteger
 import javax.inject.Inject
 
-@FragmentAnnotation(layout = R.layout.fragment_question)
-class QuestionFragment : PagingListFragment() {
+@ScreenAnnotation(layout = R.layout.fragment_question)
+class QuestionFragment : StackOverflowFragment {
 
-    private val adapter = RowArrayAdapter<Serializable, Answer>(Answer::class.java, RowFactory { parent -> AnswerRow(parent) })
+    private lateinit var adapter: RowArrayAdapter<Serializable>
 
     @Inject
-    lateinit var questionViewModel: QuestionViewModel
+    lateinit var viewModelFactory: QuestionViewModelFactory
 
-    private lateinit var question: Question
+    lateinit var viewModel: QuestionViewModel
 
-    override var refreshing: Boolean by RefreshingDelegate { question_swipeRefresh }
+    private var question: Question by FragmentArgumentDelegate()
+
+    private var currentPage = AtomicInteger(FIRST_PAGE)
+
+    private var isLastPage = AtomicBoolean(false)
+
+    constructor(parentNavigator: Navigator) : super(parentNavigator)
+
+    constructor(parentNavigator: Navigator, question: Question) : super(parentNavigator) {
+        this.question = question
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        stackOverflowApplication!!.component.inject(this)
+        viewModel = getViewModel(QuestionViewModel::class.java, viewModelFactory)
+
+        adapter = RowArrayAdapter()
+        adapter.putFactory(Answer::class.java, { AnswerRow(it) })
+        adapter.putFactory(Question::class.java, { FullQuestionRow(it) })
+        adapter.putFactory(ErrorValue::class.java, { ErrorRow(it) })
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        if (savedInstanceState != null) {
-            onRestoreInstanceState(savedInstanceState)
-        } else {
-            question = arguments!!.get(QUESTION) as Question
+        if (savedInstanceState == null)
             loadPage(FIRST_PAGE)
-        }
 
         question_toolbar.title = question.title
 
-        initAdapter()
+        initRecycler()
 
         question_swipeRefresh.setOnRefreshListener {
             loadPage(FIRST_PAGE)
         }
 
-        questionViewModel.getState().observe(this, Observer {
-            when (it) {
-                is QuestionState.Searching -> question_swipeRefresh.isRefreshing = true
-                is QuestionState.Results -> {
-                    adapter.items = arrayOf(question, *it.items)
-                    isLastPage.set(it.lastPage)
-                    question_swipeRefresh.isRefreshing = false
-                }
-                is QuestionState.Error -> {
-                    question_swipeRefresh.isRefreshing = false
-                    adapter.items = arrayOf(ErrorValue(it.error.message.toString()))
+        viewModel.getState().observe(this, Observer { onStateChanged(it) })
+    }
+
+    private fun onStateChanged(state: QuestionState) {
+        when (state) {
+            is QuestionState.Searching -> question_swipeRefresh.isRefreshing = true
+            is QuestionState.Results -> {
+                adapter.items = arrayOf(question, *state.items)
+                isLastPage.set(state.lastPage)
+                question_swipeRefresh.isRefreshing = false
+            }
+            is QuestionState.Error -> {
+                question_swipeRefresh.isRefreshing = false
+                adapter.items = arrayOf(ErrorValue(state.error.message.toString()))
+            }
+        }
+    }
+
+    private fun initRecycler() {
+        adapter.items = arrayOf(question)
+
+        val layoutManager = LinearLayoutManager(context)
+        question_recycler.layoutManager = layoutManager
+        question_recycler.adapter = adapter
+        question_recycler.addOnScrollListener(object : RecyclerView.Pagination(layoutManager) {
+            override fun isLastPage() = this@QuestionFragment.isLastPage.get()
+
+            override fun loadNextPage() {
+                arguments!!.getString(SearchFragment.CURRENT_QUERY)?.let {
+                    loadPage(currentPage.incrementAndGet())
                 }
             }
+
+            override fun isLoading() = question_swipeRefresh.isRefreshing
         })
     }
 
-    private fun initAdapter() {
-        adapter.addFactory(Question::class.java, { parent -> FullQuestionRow(parent) })
-        adapter.addFactory(ErrorValue::class.java, { parent -> ErrorRow(parent) })
-        adapter.items = arrayOf(question)
-        question_recycler.layoutManager = layoutManager
-        question_recycler.adapter = adapter
-        question_recycler.addOnScrollListener(onScrollListener)
-    }
-
-    override fun loadPage(page:Int) {
-        questionViewModel.getAnswers(question.question_id!!, page)
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        if (adapter.items.isNotEmpty())
-            outState.putSerializable(ITEMS, adapter.items)
-        outState.putSerializable(QUESTION, question)
-    }
-
-    private fun onRestoreInstanceState(savedInstanceState: Bundle) {
-        if (savedInstanceState.containsKey(ITEMS))
-            adapter.items = savedInstanceState.getSerializable(ITEMS) as Array<out Serializable>?
-        question = savedInstanceState.getSerializable(QUESTION) as Question
-    }
-
-    companion object {
-        private const val QUESTION = "question"
-        const val ITEMS = "items"
-
-        fun makeStep(question: Question): NavigationStep {
-            val arguments = HashMap<String, Serializable>()
-            arguments[QUESTION] = question
-            return NavigationStep(QuestionFragment::class.java, arguments)
-        }
-    }
+    private fun loadPage(page: Int) = viewModel.getAnswers(question.question_id!!, page)
 }
 

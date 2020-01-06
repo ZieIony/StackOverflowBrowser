@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<carbon.widget.LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<carbon.widget.LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -14,28 +13,27 @@
 
         <carbon.widget.Toolbar
             android:layout_width="match_parent"
+            style="@style/carbon_Toolbar.Flat"
             android:layout_height="@dimen/carbon_toolbarHeight"
-            android:background="@null"
             android:text="@string/search_title"
-            app:carbon_elevation="0dp"
             app:carbon_icon="@null">
 
             <carbon.widget.ImageView
                 android:id="@+id/search_openSearch"
-                style="@style/carbon_ImageView.IconButton"
-                android:src="@raw/ic_search_24px"/>
+                style="@style/carbon_ImageView.IconButton.Inverse"
+                app:carbon_src="@raw/ic_search_24px" />
         </carbon.widget.Toolbar>
 
         <com.github.zieiony.stackoverflowbrowser.ui.widget.SearchView
             android:id="@+id/search_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?attr/carbon_colorBackground"
-            android:visibility="invisible"/>
+            android:background="?attr/carbon_colorForeground"
+            android:visibility="invisible" />
 
     </carbon.widget.FrameLayout>
 
-    <android.support.v4.widget.SwipeRefreshLayout
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/search_swipeRefresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -45,7 +43,7 @@
             android:id="@+id/search_recycler"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:divider="?attr/carbon_dividerColor"
-            android:dividerHeight="@dimen/carbon_dividerHeight"/>
-    </android.support.v4.widget.SwipeRefreshLayout>
+            android:divider="?attr/carbon_colorControl"
+            android:dividerHeight="@dimen/carbon_dividerHeight" />
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </carbon.widget.LinearLayout>

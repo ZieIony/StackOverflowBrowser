@@ -3,36 +3,43 @@ package com.github.zieiony.stackoverflowbrowser.ui.widget
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.content.Context
+import android.os.Parcel
 import android.os.Parcelable
-import android.support.v4.view.animation.FastOutSlowInInterpolator
 import android.util.AttributeSet
 import android.view.View
+import androidx.interpolator.view.animation.FastOutSlowInInterpolator
+import carbon.widget.EditText
 import carbon.widget.FrameLayout
 import com.github.zieiony.stackoverflowbrowser.ui.KeyboardUtil
-import kotlinx.android.synthetic.main.view_search.view.*
 import com.github.zieiony.stackoverflowbrowser.ui.R
-import android.os.Parcel
 
-interface OnSearchListener{
-    fun onSearch(query:String)
+interface OnSearchListener {
+    fun onSearch(query: String)
 }
 
 class SearchView @JvmOverloads constructor(
         context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : FrameLayout(context, attrs, defStyleAttr) {
 
+    private val search_query: EditText
+    private val search_close: View
+    private val search_search: View
+
     init {
         View.inflate(context, R.layout.view_search, this)
+        search_query = findViewById(R.id.search_query)
+        search_close = findViewById(R.id.search_close)
+        search_search = findViewById(R.id.search_search)
         search_close.setOnClickListener { close(search_close) }
     }
 
-    private var revealAnimator:Animator?=null
+    private var revealAnimator: Animator? = null
 
-    var query:String
-        get()=search_query.text.toString()
+    var query: String
+        get() = search_query.text.toString()
         set(value) = search_query.setText(value)
 
-    fun setOnSearchListener(listener:OnSearchListener){
+    fun setOnSearchListener(listener: OnSearchListener) {
         search_query.setOnEditorActionListener { v, actionId, event ->
             listener.onSearch(query)
             true
@@ -50,8 +57,8 @@ class SearchView @JvmOverloads constructor(
         val sbLocation = IntArray(2)
         source.getLocationOnScreen(sbLocation)
         revealAnimator?.cancel()
-        revealAnimator=createCircularReveal(sbLocation[0] - location[0] + source.width / 2,
-                sbLocation[1] - location[1] +source.height / 2, 0f, width.toFloat()).apply {
+        revealAnimator = createCircularReveal(sbLocation[0] - location[0] + source.width / 2,
+                sbLocation[1] - location[1] + source.height / 2, 0f, width.toFloat()).apply {
             interpolator = FastOutSlowInInterpolator()
             start()
         }
@@ -68,8 +75,8 @@ class SearchView @JvmOverloads constructor(
         source.getLocationOnScreen(sbLocation)
         revealAnimator?.cancel()
         revealAnimator = createCircularReveal(sbLocation[0] - location[0] + source.width / 2,
-                sbLocation[1] - location[1] +source.height / 2,
-                width.toFloat(), 0f).apply{
+                sbLocation[1] - location[1] + source.height / 2,
+                width.toFloat(), 0f).apply {
             interpolator = FastOutSlowInInterpolator()
             addListener(object : AnimatorListenerAdapter() {
                 override fun onAnimationStart(animation: Animator?) {
@@ -98,7 +105,7 @@ class SearchView @JvmOverloads constructor(
     }
 
     internal class SavedState : View.BaseSavedState {
-        var state: Int= View.INVISIBLE
+        var state: Int = View.INVISIBLE
 
         constructor(superState: Parcelable) : super(superState) {}
 

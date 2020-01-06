@@ -1,20 +1,21 @@
 package com.github.zieiony.stackoverflowbrowser
 
-import android.content.Context
-import android.support.multidex.MultiDex
+import android.app.Application
+import com.github.zieiony.stackoverflowbrowser.api.di.APIModule
+import com.github.zieiony.stackoverflowbrowser.api.di.DataModule
+import com.github.zieiony.stackoverflowbrowser.di.AppComponent
+import com.github.zieiony.stackoverflowbrowser.di.AppModule
 import com.github.zieiony.stackoverflowbrowser.di.DaggerAppComponent
-import dagger.android.support.DaggerApplication
+import com.github.zieiony.stackoverflowbrowser.di.SearchModule
 
 
-class StackOverflowApplication : DaggerApplication() {
-    private val applicationInjector = DaggerAppComponent.builder()
-            .application(this)
+class StackOverflowApplication : Application() {
+    var component: AppComponent = DaggerAppComponent
+            .builder()
+            .aPIModule(APIModule(this))
+            .dataModule(DataModule())
+            .appModule(AppModule())
+            .searchModule(SearchModule())
             .build()
 
-    override fun applicationInjector() = applicationInjector
-
-    override fun attachBaseContext(base: Context) {
-        super.attachBaseContext(base)
-        MultiDex.install(this)
-    }
 }

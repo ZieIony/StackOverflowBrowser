@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<carbon.widget.LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<carbon.widget.LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
     <carbon.widget.Toolbar
         android:id="@+id/question_toolbar"
+        style="@style/carbon_Toolbar.ActionBar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content" />
 
-    <android.support.v4.widget.SwipeRefreshLayout
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/question_swipeRefresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -19,7 +19,7 @@
             android:id="@+id/question_recycler"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:divider="?attr/carbon_dividerColor"
-            android:dividerHeight="@dimen/carbon_dividerHeight"/>
-    </android.support.v4.widget.SwipeRefreshLayout>
+            android:divider="?attr/carbon_colorControl"
+            android:dividerHeight="@dimen/carbon_dividerHeight" />
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </carbon.widget.LinearLayout>

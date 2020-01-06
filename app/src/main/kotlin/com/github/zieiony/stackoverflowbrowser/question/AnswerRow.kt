@@ -14,6 +14,6 @@ class AnswerRow(parent: ViewGroup?) : DataBindingComponent<Answer>(parent, R.lay
 
         view.answerRow_text.text = Html.fromHtml(data.body)
 
-        Picasso.with(view.context).load(data.owner!!.profile_image).into(view.answerRow_ownerPicture)
+        Picasso.get().load(data.owner!!.profile_image).into(view.answerRow_ownerPicture)
     }
 }

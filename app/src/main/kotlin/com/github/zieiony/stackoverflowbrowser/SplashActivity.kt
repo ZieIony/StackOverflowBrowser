@@ -1,17 +1,15 @@
 package com.github.zieiony.stackoverflowbrowser
 
+import android.content.Intent
 import android.os.Bundle
-import com.github.zieiony.stackoverflowbrowser.navigation.NavigationActivity
-import com.github.zieiony.stackoverflowbrowser.search.SearchFragment
+import com.github.zieiony.base.app.BaseActivity
 
-class SplashActivity : NavigationActivity() {
+class SplashActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        navigate(SearchFragment::class.java)
+        startActivity(Intent(this, MainActivity::class.java))
         finish()
     }
-
 }
-

@@ -37,11 +37,16 @@ android {
 }
 
 dependencies {
-    implementation 'com.github.ZieIony:dataapi:d7576e784a'
-
     implementation "com.google.dagger:dagger:$conf.daggerVersion"
     kapt "com.google.dagger:dagger-compiler:$conf.daggerVersion"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$conf.kotlin_version"
+
+    implementation 'com.squareup.retrofit2:retrofit:2.7.1'
+    implementation 'com.squareup.retrofit2:converter-jackson:2.7.1'
+    implementation 'com.squareup.retrofit2:adapter-rxjava2:2.7.1'
+
+    debugCompile 'com.readystatesoftware.chuck:library:1.1.0'
+    releaseCompile 'com.readystatesoftware.chuck:library-no-op:1.1.0'
 
     testImplementation "junit:junit:${conf.jUnitVersion}"
     testImplementation "org.assertj:assertj-core:${conf.assertJVersion}"

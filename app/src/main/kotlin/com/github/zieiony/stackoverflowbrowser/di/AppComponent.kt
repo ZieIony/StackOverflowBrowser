@@ -1,30 +1,23 @@
 package com.github.zieiony.stackoverflowbrowser.di
 
-import com.github.zieiony.stackoverflowbrowser.StackOverflowApplication
 import com.github.zieiony.stackoverflowbrowser.api.di.APIModule
 import com.github.zieiony.stackoverflowbrowser.api.di.DataModule
-import dagger.BindsInstance
+import com.github.zieiony.stackoverflowbrowser.question.QuestionFragment
+import com.github.zieiony.stackoverflowbrowser.search.SearchFragment
 import dagger.Component
-import dagger.android.AndroidInjectionModule
-import dagger.android.AndroidInjector
 import javax.inject.Singleton
 
 
 @Singleton
 @Component(modules = [
-    AndroidInjectionModule::class,
     APIModule::class,
     DataModule::class,
-    ScreenModule::class])
-interface AppComponent : AndroidInjector<StackOverflowApplication> {
+    SearchModule::class,
+    QuestionModule::class,
+    AppModule::class
+])
+interface AppComponent {
 
-    @Component.Builder
-    interface Builder {
-        @BindsInstance
-        fun application(application: StackOverflowApplication): Builder
-
-        fun build(): AppComponent
-    }
-
-    override fun inject(app: StackOverflowApplication)
+    fun inject(searchFragment: SearchFragment)
+    fun inject(questionFragment: QuestionFragment)
 }

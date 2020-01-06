@@ -37,13 +37,7 @@ android {
 }
 
 dependencies {
-    implementation "com.android.support:design:$conf.appCompatVersion"
-    implementation "com.android.support:gridlayout-v7:$conf.appCompatVersion"
-    implementation "com.android.support:recyclerview-v7:$conf.appCompatVersion"
-    implementation "com.android.support:appcompat-v7:$conf.appCompatVersion"
-    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
-
-    implementation 'tk.zielony:carbon:0.15.3'
+    api 'com.github.zieiony.carbon:carbon:d3a7e3a084'
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }

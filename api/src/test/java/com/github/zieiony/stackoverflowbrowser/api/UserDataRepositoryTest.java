@@ -8,13 +8,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 
 import java.util.Arrays;
 
 import io.reactivex.Observable;
-import tk.zielony.dataapi.Response;
 
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.any;
@@ -43,13 +40,12 @@ public class UserDataRepositoryTest {
         };
         QuestionsResponse questionsResponse = new QuestionsResponse();
         questionsResponse.setItems(questions);
-        Response<QuestionsResponse> response = new Response<>(HttpMethod.GET, "endpoint", questionsResponse, HttpStatus.OK);
-        given(stackOverflowAPI.searchQuestions(anyString(), anyInt(), any())).willReturn(Observable.just(response));
+        given(stackOverflowAPI.searchQuestions(anyString(), anyInt(), any(), any(), any(), any(), any())).willReturn(Observable.just(questionsResponse));
 
-        Observable<Response<QuestionsResponse>> responseObservable = questionRepository.getQuestions("java", 5);
-        Response<QuestionsResponse> response1 = responseObservable.blockingFirst();
-        assert Arrays.equals(response1.getData().getItems(), questions);
+        Observable<QuestionsResponse> responseObservable = questionRepository.getQuestions("java", 5);
+        QuestionsResponse response1 = responseObservable.blockingFirst();
+        assert Arrays.equals(response1.getItems(), questions);
 
-        verify(stackOverflowAPI).searchQuestions(any(), anyInt(), any());
+        verify(stackOverflowAPI).searchQuestions(any(), anyInt(), any(), any(), any(), any(), any());
     }
 }
