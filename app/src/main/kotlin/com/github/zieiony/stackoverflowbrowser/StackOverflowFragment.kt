@@ -10,7 +10,7 @@ open class StackOverflowFragment(parentNavigator: Navigator) : BaseFragment(pare
     protected val stackOverflowApplication
         get() = context?.applicationContext as StackOverflowApplication?
 
-    protected fun showError(exception: Throwable) {
+    protected open fun showError(exception: Throwable) {
         val snackbar = Snackbar(context, exception.message ?: "Error", ERROR_DURATION)
         snackbar.style = Snackbar.Style.Docked
         snackbar.show(view as ViewGroup)

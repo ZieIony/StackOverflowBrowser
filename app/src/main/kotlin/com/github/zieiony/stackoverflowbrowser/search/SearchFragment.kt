@@ -7,13 +7,13 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import carbon.recycler.RowArrayAdapter
 import carbon.widget.RecyclerView
+import com.github.zieiony.base.app.FragmentArgumentDelegate
 import com.github.zieiony.base.app.Navigator
 import com.github.zieiony.base.app.ScreenAnnotation
 import com.github.zieiony.stackoverflowbrowser.ErrorRow
 import com.github.zieiony.stackoverflowbrowser.ErrorValue
 import com.github.zieiony.stackoverflowbrowser.R
 import com.github.zieiony.stackoverflowbrowser.StackOverflowFragment
-import com.github.zieiony.stackoverflowbrowser.api.QuestionRepository.Companion.FIRST_PAGE
 import com.github.zieiony.stackoverflowbrowser.api.data.Question
 import com.github.zieiony.stackoverflowbrowser.question.QuestionFragment
 import com.github.zieiony.stackoverflowbrowser.ui.KeyboardUtil
@@ -21,20 +21,19 @@ import com.github.zieiony.stackoverflowbrowser.ui.widget.OnSearchListener
 import kotlinx.android.synthetic.main.fragment_search.*
 import java.io.Serializable
 import java.util.concurrent.atomic.AtomicBoolean
-import java.util.concurrent.atomic.AtomicInteger
 import javax.inject.Inject
 
 @ScreenAnnotation(layout = R.layout.fragment_search)
 class SearchFragment(parentNavigator: Navigator) : StackOverflowFragment(parentNavigator) {
-
-    private lateinit var adapter: RowArrayAdapter<Serializable>
 
     @Inject
     lateinit var viewModelFactory: SearchViewModelFactory
 
     private lateinit var searchViewModel: SearchViewModel
 
-    private var currentPage = AtomicInteger(FIRST_PAGE)
+    private lateinit var adapter: RowArrayAdapter<Serializable>
+
+    private var query: String? by FragmentArgumentDelegate()
 
     private var isLastPage = AtomicBoolean(false)
 
@@ -63,7 +62,7 @@ class SearchFragment(parentNavigator: Navigator) : StackOverflowFragment(parentN
             override fun onSearch(query: String) = search(query)
         })
         search_swipeRefresh.setOnRefreshListener {
-            loadPage(FIRST_PAGE)
+            loadFirstPage()
         }
 
         search_openSearch.setOnClickListener { search_view.open(search_openSearch) }
@@ -79,8 +78,8 @@ class SearchFragment(parentNavigator: Navigator) : StackOverflowFragment(parentN
             override fun isLastPage() = this@SearchFragment.isLastPage.get()
 
             override fun loadNextPage() {
-                arguments!!.getString(CURRENT_QUERY)?.let {
-                    loadPage(currentPage.incrementAndGet())
+                query?.let {
+                    this@SearchFragment.loadNextPage()
                 }
             }
 
@@ -88,37 +87,39 @@ class SearchFragment(parentNavigator: Navigator) : StackOverflowFragment(parentN
         })
     }
 
-    private fun onStateChanged(state: SearchState) {
-        when (state) {
-            is SearchState.Empty -> search_swipeRefresh.isRefreshing = false
-            is SearchState.Searching -> search_swipeRefresh.isRefreshing = true
-            is SearchState.Results -> {
-                adapter.items = state.items
-                isLastPage.set(state.lastPage)
-                search_swipeRefresh.isRefreshing = false
-            }
-            is SearchState.Error -> {
-                search_swipeRefresh.isRefreshing = false
-                adapter.items = arrayOf(ErrorValue(state.error.message.toString()))
-            }
-        }
-    }
-
     private fun search(query: String) {
         KeyboardUtil.hideKeyboard(search_view)
         if (TextUtils.isEmpty(query))
             return
-        arguments!!.putString(CURRENT_QUERY, query)
-        search_swipeRefresh.isEnabled = true
-        loadPage(FIRST_PAGE)
+        this.query = query
+        loadFirstPage()
     }
 
-    private fun loadPage(page: Int) {
-        searchViewModel.search(arguments!!.getString(CURRENT_QUERY)!!, page)
+    private fun loadFirstPage() = searchViewModel.loadFirstPage(query!!)
+
+    private fun loadNextPage() = searchViewModel.loadNextPage()
+
+    private fun onStateChanged(state: SearchState) {
+        when (state) {
+            is SearchState.Empty -> search_swipeRefresh.isRefreshing = false
+            is SearchState.Searching -> {
+                search_swipeRefresh.isEnabled = true
+                search_swipeRefresh.isRefreshing = true
+            }
+            is SearchState.Results -> showResults(state.items, state.lastPage)
+            is SearchState.Error -> showError(state.error)
+        }
     }
 
-    companion object {
-        const val CURRENT_QUERY = "query"
+    override fun showError(exception: Throwable) {
+        search_swipeRefresh.isRefreshing = false
+        adapter.items = arrayOf(ErrorValue(exception.message.toString()))
+    }
+
+    private fun showResults(items: Array<out Serializable>, lastPage: Boolean) {
+        adapter.items = items
+        isLastPage.set(lastPage)
+        search_swipeRefresh.isRefreshing = false
     }
 }
 

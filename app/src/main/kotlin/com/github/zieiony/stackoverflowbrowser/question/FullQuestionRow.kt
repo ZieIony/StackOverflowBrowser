@@ -20,7 +20,10 @@ class FullQuestionRow(parent: ViewGroup?) : DataBindingComponent<Question>(paren
         view.fullQuestionRow_tags.removeAllViews()
         data.tags?.let {
             for (tag in it) {
-                view.fullQuestionRow_tags.addView(TextView(view.context, tag), ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT))
+                val textView = TextView(view.context, null, R.attr.tagViewStyle)
+                textView.text = tag
+                val layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+                view.fullQuestionRow_tags.addView(textView, layoutParams)
             }
         }
     }

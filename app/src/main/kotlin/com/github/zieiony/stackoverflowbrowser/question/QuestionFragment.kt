@@ -13,29 +13,24 @@ import com.github.zieiony.stackoverflowbrowser.ErrorRow
 import com.github.zieiony.stackoverflowbrowser.ErrorValue
 import com.github.zieiony.stackoverflowbrowser.R
 import com.github.zieiony.stackoverflowbrowser.StackOverflowFragment
-import com.github.zieiony.stackoverflowbrowser.api.QuestionRepository.Companion.FIRST_PAGE
 import com.github.zieiony.stackoverflowbrowser.api.data.Answer
 import com.github.zieiony.stackoverflowbrowser.api.data.Question
-import com.github.zieiony.stackoverflowbrowser.search.SearchFragment
 import kotlinx.android.synthetic.main.fragment_question.*
 import java.io.Serializable
 import java.util.concurrent.atomic.AtomicBoolean
-import java.util.concurrent.atomic.AtomicInteger
 import javax.inject.Inject
 
 @ScreenAnnotation(layout = R.layout.fragment_question)
 class QuestionFragment : StackOverflowFragment {
 
-    private lateinit var adapter: RowArrayAdapter<Serializable>
-
     @Inject
     lateinit var viewModelFactory: QuestionViewModelFactory
 
-    lateinit var viewModel: QuestionViewModel
+    private lateinit var viewModel: QuestionViewModel
+
+    private lateinit var adapter: RowArrayAdapter<Serializable>
 
     private var question: Question by FragmentArgumentDelegate()
-
-    private var currentPage = AtomicInteger(FIRST_PAGE)
 
     private var isLastPage = AtomicBoolean(false)
 
@@ -60,32 +55,17 @@ class QuestionFragment : StackOverflowFragment {
         super.onViewCreated(view, savedInstanceState)
 
         if (savedInstanceState == null)
-            loadPage(FIRST_PAGE)
+            loadFirstPage()
 
         question_toolbar.title = question.title
 
         initRecycler()
 
         question_swipeRefresh.setOnRefreshListener {
-            loadPage(FIRST_PAGE)
+            loadFirstPage()
         }
 
         viewModel.getState().observe(this, Observer { onStateChanged(it) })
-    }
-
-    private fun onStateChanged(state: QuestionState) {
-        when (state) {
-            is QuestionState.Searching -> question_swipeRefresh.isRefreshing = true
-            is QuestionState.Results -> {
-                adapter.items = arrayOf(question, *state.items)
-                isLastPage.set(state.lastPage)
-                question_swipeRefresh.isRefreshing = false
-            }
-            is QuestionState.Error -> {
-                question_swipeRefresh.isRefreshing = false
-                adapter.items = arrayOf(ErrorValue(state.error.message.toString()))
-            }
-        }
     }
 
     private fun initRecycler() {
@@ -97,16 +77,33 @@ class QuestionFragment : StackOverflowFragment {
         question_recycler.addOnScrollListener(object : RecyclerView.Pagination(layoutManager) {
             override fun isLastPage() = this@QuestionFragment.isLastPage.get()
 
-            override fun loadNextPage() {
-                arguments!!.getString(SearchFragment.CURRENT_QUERY)?.let {
-                    loadPage(currentPage.incrementAndGet())
-                }
-            }
+            override fun loadNextPage() = (this@QuestionFragment).loadNextPage()
 
             override fun isLoading() = question_swipeRefresh.isRefreshing
         })
     }
 
-    private fun loadPage(page: Int) = viewModel.getAnswers(question.question_id!!, page)
+    private fun loadFirstPage() = viewModel.loadFirstPage(question)
+
+    private fun loadNextPage() = viewModel.getNextPage()
+
+    private fun onStateChanged(state: QuestionState) {
+        when (state) {
+            is QuestionState.Searching -> question_swipeRefresh.isRefreshing = true
+            is QuestionState.Results -> showResults(state.items, state.lastPage)
+            is QuestionState.Error -> showError(state.error)
+        }
+    }
+
+    override fun showError(exception: Throwable) {
+        question_swipeRefresh.isRefreshing = false
+        adapter.items = arrayOf(ErrorValue(exception.message.toString()))
+    }
+
+    private fun showResults(items: Array<out Serializable>, lastPage: Boolean) {
+        adapter.items = arrayOf(question, *items)
+        isLastPage.set(lastPage)
+        question_swipeRefresh.isRefreshing = false
+    }
 }
 

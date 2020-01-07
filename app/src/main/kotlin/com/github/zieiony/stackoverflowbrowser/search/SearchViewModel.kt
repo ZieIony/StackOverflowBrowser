@@ -3,41 +3,50 @@ package com.github.zieiony.stackoverflowbrowser.search
 import com.github.zieiony.base.arch.BaseState
 import com.github.zieiony.base.arch.BaseViewModel
 import com.github.zieiony.base.util.Logger
-import com.github.zieiony.stackoverflowbrowser.api.IQuestionRepository
-import com.github.zieiony.stackoverflowbrowser.api.QuestionRepository.Companion.FIRST_PAGE
+import com.github.zieiony.stackoverflowbrowser.api.web.StackOverflowService.Companion.FIRST_PAGE
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import java.io.Serializable
 
-sealed class SearchState:BaseState {
+sealed class SearchState : BaseState {
     class Empty : SearchState()
     class Searching : SearchState()
-    class Results(var items: Array<out Serializable>,var lastPage: Boolean) : SearchState()
+    class Results(var items: Array<out Serializable>, var lastPage: Boolean) : SearchState()
     class Error(var error: Throwable) : SearchState()
 }
 
-class SearchViewModel : BaseViewModel<SearchState> {
+class SearchViewModel(
+        logger: Logger,
+        val getQuestionsInteractor: GetQuestionsInteractor
+) : BaseViewModel<SearchState>(logger) {
 
-    private var repository: IQuestionRepository
     private var items: Array<out Serializable>
 
-    constructor(logger: Logger, repository: IQuestionRepository) : super(logger) {
-        this.repository = repository
+    private lateinit var query: String
+
+    private var currentPage = FIRST_PAGE
+
+    init {
         this.items = arrayOf(EmptyValue())
         this.state.value = SearchState.Empty()
     }
 
-    fun search(query: String, page: Int) {
+    fun loadFirstPage(query: String) {
+        this.query = query
+        currentPage = FIRST_PAGE
+        loadNextPage()
+    }
+
+    fun loadNextPage() {
         state.value = SearchState.Searching()
-        repository.getQuestions(query, page)
-                .subscribeOn(Schedulers.io())
+        getQuestionsInteractor.execute(query, currentPage)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ response ->
                     items = when {
-                        page > FIRST_PAGE -> arrayOf(*items, *response.items!!)
+                        currentPage > FIRST_PAGE -> arrayOf(*items, *response.items!!)
                         response.items!!.isNotEmpty() -> response.items!!
                         else -> arrayOf(EmptyValue())
                     }
+                    currentPage++
                     state.value = SearchState.Results(items, !response.has_more!!)
                 }, { throwable ->
                     state.value = SearchState.Error(throwable)

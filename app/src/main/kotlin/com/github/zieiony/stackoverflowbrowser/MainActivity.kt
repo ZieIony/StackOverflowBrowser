@@ -18,9 +18,17 @@ class MainActivity : BaseActivity() {
 
     override fun onNavigateTo(fragment: BaseFragment): Boolean {
         val transaction = supportFragmentManager.beginTransaction()
-        if (main_container.childCount != 0)
-            transaction.addToBackStack(BACKSTACK_NAME)
-        transaction.replace(R.id.main_container, fragment)
+        if(resources.getBoolean(R.bool.carbon_isPhone)) {
+            if (main_container.childCount != 0)
+                transaction.addToBackStack(BACKSTACK_NAME)
+            transaction.replace(R.id.main_container, fragment)
+        }else{
+            if(fragment is SearchFragment) {
+                transaction.replace(R.id.main_container, fragment)
+            }else{
+                transaction.replace(R.id.detail_container, fragment)
+            }
+        }
         transaction.commit()
         return true
     }

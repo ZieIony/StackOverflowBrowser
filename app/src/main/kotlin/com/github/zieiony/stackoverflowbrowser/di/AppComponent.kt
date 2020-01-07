@@ -12,8 +12,6 @@ import javax.inject.Singleton
 @Component(modules = [
     APIModule::class,
     DataModule::class,
-    SearchModule::class,
-    QuestionModule::class,
     AppModule::class
 ])
 interface AppComponent {

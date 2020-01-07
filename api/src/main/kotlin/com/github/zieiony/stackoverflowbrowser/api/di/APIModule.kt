@@ -1,7 +1,7 @@
 package com.github.zieiony.stackoverflowbrowser.api.di
 
 import android.app.Application
-import com.github.zieiony.stackoverflowbrowser.api.StackOverflowAPI
+import com.github.zieiony.stackoverflowbrowser.api.web.StackOverflowAPI
 import com.readystatesoftware.chuck.ChuckInterceptor
 import dagger.Module
 import dagger.Provides

@@ -6,7 +6,6 @@ import com.github.zieiony.stackoverflowbrowser.api.di.DataModule
 import com.github.zieiony.stackoverflowbrowser.di.AppComponent
 import com.github.zieiony.stackoverflowbrowser.di.AppModule
 import com.github.zieiony.stackoverflowbrowser.di.DaggerAppComponent
-import com.github.zieiony.stackoverflowbrowser.di.SearchModule
 
 
 class StackOverflowApplication : Application() {
@@ -15,7 +14,6 @@ class StackOverflowApplication : Application() {
             .aPIModule(APIModule(this))
             .dataModule(DataModule())
             .appModule(AppModule())
-            .searchModule(SearchModule())
             .build()
 
 }

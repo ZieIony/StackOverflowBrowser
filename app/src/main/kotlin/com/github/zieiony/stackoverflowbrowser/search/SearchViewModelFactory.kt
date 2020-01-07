@@ -3,14 +3,14 @@ package com.github.zieiony.stackoverflowbrowser.search
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.github.zieiony.base.util.Logger
-import com.github.zieiony.stackoverflowbrowser.api.IQuestionRepository
+import javax.inject.Inject
 
-class SearchViewModelFactory(
+class SearchViewModelFactory @Inject constructor(
         private val logger: Logger,
-        private val repository: IQuestionRepository
+        private val getQuestionsInteractor: GetQuestionsInteractor
 ) : ViewModelProvider.NewInstanceFactory() {
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return SearchViewModel(logger, repository) as T
+        return SearchViewModel(logger, getQuestionsInteractor) as T
     }
 }
