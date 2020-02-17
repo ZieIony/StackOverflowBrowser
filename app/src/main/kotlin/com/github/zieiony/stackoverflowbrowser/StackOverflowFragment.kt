@@ -11,13 +11,8 @@ import com.github.zieiony.stackoverflowbrowser.di.ViewModelFactory
 
 open class StackOverflowFragment(parentNavigator: Navigator) : BaseFragment(parentNavigator) {
 
-    protected val stackOverflowApplication
+    private val stackOverflowApplication
         get() = context?.applicationContext as StackOverflowApplication?
-
-    val isPhone
-        get() = context!!.resources.getBoolean(R.bool.carbon_isPhone)
-
-    private var snackbar: Snackbar? = null
 
     private lateinit var viewModelFactory: ViewModelFactory
 

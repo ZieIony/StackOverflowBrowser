@@ -37,7 +37,7 @@ android {
 }
 
 dependencies {
-    api 'com.github.zieiony.carbon:carbon:d3a7e3a084'
+    api 'com.github.zieiony.carbon:carbon:3e9b7e9be7'
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }

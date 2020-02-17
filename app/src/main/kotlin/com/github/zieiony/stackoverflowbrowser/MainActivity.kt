@@ -10,6 +10,9 @@ import kotlinx.android.synthetic.main.activity_main.*
 @ScreenAnnotation(layoutId = R.layout.activity_main)
 class MainActivity : BaseActivity() {
 
+    val isPhone
+        get() = resources.getBoolean(R.bool.carbon_isPhone)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (savedInstanceState == null)
@@ -18,14 +21,14 @@ class MainActivity : BaseActivity() {
 
     override fun onNavigateTo(fragment: Fragment): Boolean {
         val transaction = supportFragmentManager.beginTransaction()
-        if(resources.getBoolean(R.bool.carbon_isPhone)) {
+        if (isPhone) {
             if (main_container.childCount != 0)
                 transaction.addToBackStack(BACKSTACK_NAME)
             transaction.replace(R.id.main_container, fragment)
-        }else{
-            if(fragment is SearchFragment) {
+        } else {
+            if (fragment is SearchFragment) {
                 transaction.replace(R.id.main_container, fragment)
-            }else{
+            } else {
                 transaction.replace(R.id.detail_container, fragment)
             }
         }
