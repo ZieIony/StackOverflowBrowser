@@ -23,13 +23,10 @@ import java.io.Serializable
 import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
 
-@ScreenAnnotation(layout = R.layout.fragment_search)
+@ScreenAnnotation(layoutId = R.layout.fragment_search)
 class SearchFragment(parentNavigator: Navigator) : StackOverflowFragment(parentNavigator) {
 
-    @Inject
-    lateinit var viewModelFactory: SearchViewModelFactory
-
-    private lateinit var searchViewModel: SearchViewModel
+    private val searchViewModel by lazy { getViewModel(SearchViewModel::class.java) }
 
     private lateinit var adapter: RowArrayAdapter<Serializable>
 
@@ -39,8 +36,6 @@ class SearchFragment(parentNavigator: Navigator) : StackOverflowFragment(parentN
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        stackOverflowApplication!!.component.inject(this)
-        searchViewModel = getViewModel(SearchViewModel::class.java, viewModelFactory)
 
         adapter = RowArrayAdapter()
         adapter.putFactory(Question::class.java, { QuestionRow(it) })
@@ -67,7 +62,7 @@ class SearchFragment(parentNavigator: Navigator) : StackOverflowFragment(parentN
 
         search_openSearch.setOnClickListener { search_view.open(search_openSearch) }
 
-        searchViewModel.getState().observe(this, Observer(this@SearchFragment::onStateChanged))
+        searchViewModel.getState().observe(viewLifecycleOwner, Observer(this@SearchFragment::onStateChanged))
     }
 
     private fun initRecycler() {

@@ -1,8 +1,8 @@
 package com.github.zieiony.stackoverflowbrowser.question
 
+import androidx.lifecycle.SavedStateHandle
 import com.github.zieiony.base.arch.BaseState
 import com.github.zieiony.base.arch.BaseViewModel
-import com.github.zieiony.base.util.Logger
 import com.github.zieiony.stackoverflowbrowser.api.data.Question
 import com.github.zieiony.stackoverflowbrowser.api.web.StackOverflowService.Companion.FIRST_PAGE
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -15,9 +15,9 @@ sealed class QuestionState : BaseState {
 }
 
 class QuestionViewModel(
-        logger: Logger,
+        handle:SavedStateHandle,
         private var getAnswersInteractor: GetAnswersInteractor
-) : BaseViewModel<QuestionState>(logger) {
+) : BaseViewModel<QuestionState>(handle) {
 
     private lateinit var question: Question
 

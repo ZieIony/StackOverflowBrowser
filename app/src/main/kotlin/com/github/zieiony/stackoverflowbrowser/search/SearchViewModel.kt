@@ -1,8 +1,8 @@
 package com.github.zieiony.stackoverflowbrowser.search
 
+import androidx.lifecycle.SavedStateHandle
 import com.github.zieiony.base.arch.BaseState
 import com.github.zieiony.base.arch.BaseViewModel
-import com.github.zieiony.base.util.Logger
 import com.github.zieiony.stackoverflowbrowser.api.web.StackOverflowService.Companion.FIRST_PAGE
 import io.reactivex.android.schedulers.AndroidSchedulers
 import java.io.Serializable
@@ -15,9 +15,9 @@ sealed class SearchState : BaseState {
 }
 
 class SearchViewModel(
-        logger: Logger,
+        handle: SavedStateHandle,
         val getQuestionsInteractor: GetQuestionsInteractor
-) : BaseViewModel<SearchState>(logger) {
+) : BaseViewModel<SearchState>(handle) {
 
     private var items: Array<out Serializable>
 

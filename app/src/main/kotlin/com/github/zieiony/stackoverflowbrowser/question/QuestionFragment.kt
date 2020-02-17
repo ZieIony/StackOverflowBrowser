@@ -18,15 +18,11 @@ import com.github.zieiony.stackoverflowbrowser.api.data.Question
 import kotlinx.android.synthetic.main.fragment_question.*
 import java.io.Serializable
 import java.util.concurrent.atomic.AtomicBoolean
-import javax.inject.Inject
 
-@ScreenAnnotation(layout = R.layout.fragment_question)
+@ScreenAnnotation(layoutId = R.layout.fragment_question)
 class QuestionFragment : StackOverflowFragment {
 
-    @Inject
-    lateinit var viewModelFactory: QuestionViewModelFactory
-
-    private lateinit var viewModel: QuestionViewModel
+    private val viewModel by lazy { getViewModel(QuestionViewModel::class.java) }
 
     private lateinit var adapter: RowArrayAdapter<Serializable>
 
@@ -42,8 +38,6 @@ class QuestionFragment : StackOverflowFragment {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        stackOverflowApplication!!.component.inject(this)
-        viewModel = getViewModel(QuestionViewModel::class.java, viewModelFactory)
 
         adapter = RowArrayAdapter()
         adapter.putFactory(Answer::class.java, { AnswerRow(it) })
@@ -65,7 +59,7 @@ class QuestionFragment : StackOverflowFragment {
             loadFirstPage()
         }
 
-        viewModel.getState().observe(this, Observer { onStateChanged(it) })
+        viewModel.getState().observe(viewLifecycleOwner, Observer { onStateChanged(it) })
     }
 
     private fun initRecycler() {
