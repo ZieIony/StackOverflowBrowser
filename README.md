@@ -20,12 +20,7 @@ https://github.com/ZieIony/Carbon
 
 Material Design utility and backport. Helps me deal with UI-related irritating details. It's based on official android.support/android.support.design libraries with a bit of data binding, custom vector loading and animation helpers.
 
-##### DataAPI
-https://github.com/ZieIony/DataAPI
+##### Base
+https://github.com/ZieIony/Base
 
-Reactive REST requests. Uses RxJava, Jackson and Spring.
-
-##### StateMachine
-https://github.com/ZieIony/StateMachine
-
-Just a state machine.
+Base code for all my current Android application projects. Contains navigation setup for activities and fragments, and some view model-related stuff.
