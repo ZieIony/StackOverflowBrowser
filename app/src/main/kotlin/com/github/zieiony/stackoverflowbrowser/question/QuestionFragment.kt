@@ -84,7 +84,7 @@ class QuestionFragment : StackOverflowFragment {
     }
 
     private fun showResults(items: Array<out Serializable>, lastPage: Boolean) {
-        adapter.items = arrayOf(question, *items)
+        adapter.items = items
         isLastPage.set(lastPage)
         question_swipeRefresh.isRefreshing = false
     }

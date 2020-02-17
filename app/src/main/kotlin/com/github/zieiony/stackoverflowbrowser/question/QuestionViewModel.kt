@@ -3,6 +3,7 @@ package com.github.zieiony.stackoverflowbrowser.question
 import androidx.lifecycle.SavedStateHandle
 import com.github.zieiony.base.arch.BaseState
 import com.github.zieiony.base.arch.BaseViewModel
+import com.github.zieiony.base.arch.ViewModelStateDelegate
 import com.github.zieiony.stackoverflowbrowser.api.data.Question
 import com.github.zieiony.stackoverflowbrowser.api.web.StackOverflowService.Companion.FIRST_PAGE
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -19,11 +20,11 @@ class QuestionViewModel(
         private var getAnswersInteractor: GetAnswersInteractor
 ) : BaseViewModel<QuestionState>(handle) {
 
-    private lateinit var question: Question
+    private var question by ViewModelStateDelegate<Question>()
 
     private var currentPage = FIRST_PAGE
 
-    private var items: Array<out Serializable>
+    private var items by ViewModelStateDelegate<Array<out Serializable>>()
 
     init {
         this.items = emptyArray()
@@ -46,7 +47,7 @@ class QuestionViewModel(
                         else -> response.items!!
                     }
                     currentPage++
-                    state.value = QuestionState.Results(items, !response.has_more!!)
+                    state.value = QuestionState.Results(arrayOf(question, *items), !response.has_more!!)
                 }, { throwable ->
                     state.value = QuestionState.Error(throwable)
                 })

@@ -3,6 +3,7 @@ package com.github.zieiony.stackoverflowbrowser.search
 import androidx.lifecycle.SavedStateHandle
 import com.github.zieiony.base.arch.BaseState
 import com.github.zieiony.base.arch.BaseViewModel
+import com.github.zieiony.base.arch.ViewModelStateDelegate
 import com.github.zieiony.stackoverflowbrowser.api.web.StackOverflowService.Companion.FIRST_PAGE
 import io.reactivex.android.schedulers.AndroidSchedulers
 import java.io.Serializable
@@ -19,9 +20,9 @@ class SearchViewModel(
         val getQuestionsInteractor: GetQuestionsInteractor
 ) : BaseViewModel<SearchState>(handle) {
 
-    private var items: Array<out Serializable>
+    private var items by ViewModelStateDelegate<Array<out Serializable>>()
 
-    private lateinit var query: String
+    private var query by ViewModelStateDelegate<String>()
 
     private var currentPage = FIRST_PAGE
 
