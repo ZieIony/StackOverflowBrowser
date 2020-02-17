@@ -68,7 +68,7 @@ class QuestionFragment : StackOverflowFragment {
 
     private fun loadFirstPage() = viewModel.loadFirstPage(question)
 
-    private fun loadNextPage() = viewModel.getNextPage()
+    private fun loadNextPage() = viewModel.loadNextPage()
 
     private fun onStateChanged(state: QuestionState) {
         when (state) {

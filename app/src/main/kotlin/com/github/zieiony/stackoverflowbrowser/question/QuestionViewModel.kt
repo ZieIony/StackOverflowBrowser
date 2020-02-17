@@ -34,10 +34,10 @@ class QuestionViewModel(
     fun loadFirstPage(question: Question) {
         this.question = question
         currentPage = FIRST_PAGE
-        getNextPage()
+        loadNextPage()
     }
 
-    fun getNextPage() {
+    fun loadNextPage() {
         state.value = QuestionState.Searching
         getAnswersInteractor.execute(question, currentPage)
                 .observeOn(AndroidSchedulers.mainThread())
