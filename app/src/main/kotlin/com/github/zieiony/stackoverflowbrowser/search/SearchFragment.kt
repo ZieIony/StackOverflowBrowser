@@ -5,47 +5,32 @@ import android.text.TextUtils
 import android.view.View
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
-import carbon.recycler.RowArrayAdapter
 import carbon.widget.RecyclerView
 import com.github.zieiony.base.app.FragmentArgumentDelegate
 import com.github.zieiony.base.app.Navigator
 import com.github.zieiony.base.app.ScreenAnnotation
-import com.github.zieiony.stackoverflowbrowser.ErrorRow
 import com.github.zieiony.stackoverflowbrowser.ErrorValue
 import com.github.zieiony.stackoverflowbrowser.R
 import com.github.zieiony.stackoverflowbrowser.StackOverflowFragment
-import com.github.zieiony.stackoverflowbrowser.api.data.Question
 import com.github.zieiony.stackoverflowbrowser.question.QuestionFragment
 import com.github.zieiony.stackoverflowbrowser.ui.KeyboardUtil
 import com.github.zieiony.stackoverflowbrowser.ui.widget.OnSearchListener
 import kotlinx.android.synthetic.main.fragment_search.*
 import java.io.Serializable
 import java.util.concurrent.atomic.AtomicBoolean
-import javax.inject.Inject
 
 @ScreenAnnotation(layoutId = R.layout.fragment_search)
 class SearchFragment(parentNavigator: Navigator) : StackOverflowFragment(parentNavigator) {
 
     private val searchViewModel by lazy { getViewModel(SearchViewModel::class.java) }
 
-    private lateinit var adapter: RowArrayAdapter<Serializable>
+    private var adapter = SearchAdapter(
+            onQuestionClickedListener = { navigateTo(QuestionFragment(this, it)) }
+    )
 
     private var query: String? by FragmentArgumentDelegate()
 
     private var isLastPage = AtomicBoolean(false)
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        adapter = RowArrayAdapter()
-        adapter.putFactory(Question::class.java, { QuestionRow(it) })
-        adapter.putFactory(EmptyValue::class.java, { EmptyRow(it) })
-        adapter.putFactory(ErrorValue::class.java, { ErrorRow(it) })
-        adapter.items = arrayOf(EmptyValue())
-        adapter.setOnItemClickedListener(Question::class.java, { question ->
-            navigateTo(QuestionFragment(this, question))
-        })
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

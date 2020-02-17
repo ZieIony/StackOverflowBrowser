@@ -4,16 +4,13 @@ import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
-import carbon.recycler.RowArrayAdapter
 import carbon.widget.RecyclerView
 import com.github.zieiony.base.app.FragmentArgumentDelegate
 import com.github.zieiony.base.app.Navigator
 import com.github.zieiony.base.app.ScreenAnnotation
-import com.github.zieiony.stackoverflowbrowser.ErrorRow
 import com.github.zieiony.stackoverflowbrowser.ErrorValue
 import com.github.zieiony.stackoverflowbrowser.R
 import com.github.zieiony.stackoverflowbrowser.StackOverflowFragment
-import com.github.zieiony.stackoverflowbrowser.api.data.Answer
 import com.github.zieiony.stackoverflowbrowser.api.data.Question
 import kotlinx.android.synthetic.main.fragment_question.*
 import java.io.Serializable
@@ -24,7 +21,7 @@ class QuestionFragment : StackOverflowFragment {
 
     private val viewModel by lazy { getViewModel(QuestionViewModel::class.java) }
 
-    private lateinit var adapter: RowArrayAdapter<Serializable>
+    private var adapter = QuestionAdapter()
 
     private var question: Question by FragmentArgumentDelegate()
 
@@ -36,20 +33,12 @@ class QuestionFragment : StackOverflowFragment {
         this.question = question
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        adapter = RowArrayAdapter()
-        adapter.putFactory(Answer::class.java, { AnswerRow(it) })
-        adapter.putFactory(Question::class.java, { FullQuestionRow(it) })
-        adapter.putFactory(ErrorValue::class.java, { ErrorRow(it) })
+    override fun onColdStart() {
+        loadFirstPage()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        if (savedInstanceState == null)
-            loadFirstPage()
 
         question_toolbar.title = question.title
 
