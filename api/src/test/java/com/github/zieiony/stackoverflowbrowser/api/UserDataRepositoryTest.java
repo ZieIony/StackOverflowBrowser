@@ -2,6 +2,8 @@ package com.github.zieiony.stackoverflowbrowser.api;
 
 import com.github.zieiony.stackoverflowbrowser.api.data.Question;
 import com.github.zieiony.stackoverflowbrowser.api.data.QuestionsResponse;
+import com.github.zieiony.stackoverflowbrowser.api.web.SortingOrder;
+import com.github.zieiony.stackoverflowbrowser.api.web.SortingType;
 import com.github.zieiony.stackoverflowbrowser.api.web.StackOverflowAPI;
 import com.github.zieiony.stackoverflowbrowser.api.web.StackOverflowService;
 
@@ -42,12 +44,12 @@ public class UserDataRepositoryTest {
         };
         QuestionsResponse questionsResponse = new QuestionsResponse();
         questionsResponse.setItems(questions);
-        given(stackOverflowAPI.searchQuestions(anyString(), anyInt(), any(), any(), any(), any(), any())).willReturn(Observable.just(questionsResponse));
+        given(stackOverflowAPI.searchQuestions(anyString(), anyInt(), anyInt(), any(SortingOrder.class), any(SortingType.class), anyString(), anyString())).willReturn(Observable.just(questionsResponse));
 
         Observable<QuestionsResponse> responseObservable = questionRepository.getQuestions("java", 5);
         QuestionsResponse response1 = responseObservable.blockingFirst();
         assert Arrays.equals(response1.getItems(), questions);
 
-        verify(stackOverflowAPI).searchQuestions(any(), anyInt(), any(), any(), any(), any(), any());
+        verify(stackOverflowAPI).searchQuestions(anyString(), anyInt(), anyInt(), any(SortingOrder.class), any(SortingType.class), anyString(), anyString());
     }
 }
